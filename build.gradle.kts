@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version "3.2.0" 
+    id("org.springframework.boot") version "3.2.12" 
     id("io.spring.dependency-management") version "1.1.4" 
     id("application")
     id("java")
@@ -26,13 +26,22 @@ subprojects {
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web") // 웹 애플리케이션
         implementation("org.springframework.boot:spring-boot-starter-data-jpa") // JPA
+        implementation("org.springframework.boot:spring-boot-starter-security") // 시큐리티
+        implementation("org.springframework.boot:spring-boot-starter-oauth2-client") // oauth2
 
         // Lombok
         implementation("org.projectlombok:lombok") 
         annotationProcessor("org.projectlombok:lombok")
         
+        // JSON 처리
+        implementation("com.fasterxml.jackson.core:jackson-databind")
+        implementation("org.json:json:20240303")
+
         // PostgreSQL
         implementation ("org.postgresql:postgresql")
+
+        // SpringDoc OpenAPI
+        implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
 
         // QueryDSL 설정
         implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")

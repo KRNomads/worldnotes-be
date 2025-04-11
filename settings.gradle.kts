@@ -15,6 +15,8 @@ include("app")
 
 include("common")
 include("user-service")
+include("auth-service")
 
 project(":common").projectDir = file("modules/common")
 project(":user-service").projectDir = file("modules/user-service")
+project(":auth-service").projectDir = file("modules/auth-service")
