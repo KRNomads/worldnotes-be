@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version "3.2.12" 
+    id("org.springframework.boot") version "3.4.2" 
     id("io.spring.dependency-management") version "1.1.4" 
     id("application")
     id("java")
@@ -41,7 +41,7 @@ subprojects {
         implementation ("org.postgresql:postgresql")
 
         // SpringDoc OpenAPI
-        implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
+        implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
 
         // QueryDSL 설정
         implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
