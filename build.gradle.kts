@@ -39,8 +39,8 @@ subprojects {
         implementation("com.querydsl:querydsl-core:5.0.0")
         annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
 
-        implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
-        implementation("jakarta.annotation:jakarta.annotation-api:2.1.1")
+        annotationProcessor("jakarta.persistence:jakarta.persistence-api:3.1.0")
+        annotationProcessor("jakarta.annotation:jakarta.annotation-api:2.1.1")
 
         // 테스트
         testImplementation("org.springframework.boot:spring-boot-starter-test")
