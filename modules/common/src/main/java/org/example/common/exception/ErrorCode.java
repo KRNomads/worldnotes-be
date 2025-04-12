@@ -9,6 +9,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
+    // User
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저"),
+    USER_SOCIAL_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 소셜 토큰 없음 (userId: %s)"),
+            
     // default
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "Invalid request."), // 잘못된 요청
     UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "Unauthorized."), // 인증되지 않은 사용자의 요청

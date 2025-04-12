@@ -14,7 +14,9 @@ repositories {
 }
 
 dependencies {
+    implementation (project(":auth-service"))
     implementation (project(":user-service"))
+    implementation (project(":note-service"))
     implementation (project(":common"))
 }
 
