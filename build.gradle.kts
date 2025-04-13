@@ -38,7 +38,10 @@ subprojects {
         implementation("org.json:json:20240303")
 
         // PostgreSQL
-        implementation ("org.postgresql:postgresql")
+        implementation("org.postgresql:postgresql")
+
+        // JSONB
+        implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.9")
 
         // SpringDoc OpenAPI
         implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
