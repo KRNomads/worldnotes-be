@@ -18,6 +18,12 @@ subprojects {
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "application")
     apply(plugin = "java") 
+    
+    // 모든 서브프로젝트의 Java 버전을 17로 설정
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 
     repositories {
         mavenCentral()
