@@ -36,8 +36,8 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter-oauth2-client") // oauth2
 
         // Lombok
-        implementation("org.projectlombok:lombok") 
-        annotationProcessor("org.projectlombok:lombok")
+        compileOnly("org.projectlombok:lombok:1.18.38")
+        annotationProcessor("org.projectlombok:lombok:1.18.38")
         
         // JSON 처리
         implementation("com.fasterxml.jackson.core:jackson-databind")
