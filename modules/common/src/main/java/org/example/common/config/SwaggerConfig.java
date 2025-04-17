@@ -40,6 +40,15 @@ public class SwaggerConfig {
                         .summary("구글 로그인")
                         .description("구글 소셜 로그인 인증을 위한 경로")
                         .tags(List.of("OAuth2")) // 태그 추가
+                        .parameters(List.of(
+                                new io.swagger.v3.oas.models.parameters.Parameter()
+                                        .in("query")
+                                        .name("state")
+                                        .description("OAuth2 인증 후 리디렉션할 URI 정보 (예: redirectUri=...)")
+                                        .required(false)
+                                        .example("redirectUri=https://www.example.com/login-success")
+                                        .schema(new io.swagger.v3.oas.models.media.StringSchema())
+                        ))
                         .responses(createOAuthApiResponses())));
 
         return paths;

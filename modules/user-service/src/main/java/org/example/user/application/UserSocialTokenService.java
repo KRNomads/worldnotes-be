@@ -17,7 +17,7 @@ public class UserSocialTokenService {
 
     private final UsersSocialTokenRepository usersSocialTokenRepository;
 
-    // 초기 생성
+    // ==== 초기 생성 ====
     @Transactional
     public void createUserSocialToken(UUID userId) {
         validateUserId(userId);
@@ -26,7 +26,7 @@ public class UserSocialTokenService {
                 .orElseGet(() -> usersSocialTokenRepository.save(UserSocialToken.create(userId)));
     }
 
-    // 조회
+    // ==== 조회 ====
     @Transactional(readOnly = true)
     public String getSocialRefreshToken(UUID userId) {
         validateUserId(userId);
@@ -34,7 +34,7 @@ public class UserSocialTokenService {
         return findByUserIdOrThrow(userId).getRefreshToken();
     }
 
-    // 갱신
+    // ==== 갱신 ====
     @Transactional
     public void updateRefreshToken(UUID userId, String newRefreshToken) {
         validateUserId(userId);
@@ -45,7 +45,6 @@ public class UserSocialTokenService {
         usersSocialTokenRepository.save(token);
     }
 
-    // 삭제
     @Transactional
     public void deleteRefreshToken(UUID userId) {
         validateUserId(userId);

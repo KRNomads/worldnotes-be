@@ -3,6 +3,8 @@ package org.example.user.domain.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,23 +19,23 @@ public class UserSocialToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tokenId;
+    private Long id;
 
     private UUID userId;
 
     private String refreshToken;
 
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    // 생성자
+    // === 비즈니스 로직 ===
     public UserSocialToken(Long tokenId, UUID userId, String refreshToken, LocalDateTime updatedAt) {
-        this.tokenId = tokenId;
+        this.id = tokenId;
         this.userId = userId;
         this.refreshToken = refreshToken;
         this.updatedAt = updatedAt;
     }
 
-    // 정적 팩토리 메서드
     public static UserSocialToken create(UUID userId) {
         return new UserSocialToken(
                 null,
@@ -44,7 +46,6 @@ public class UserSocialToken {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-        this.updatedAt = LocalDateTime.now();
     }
 
 }

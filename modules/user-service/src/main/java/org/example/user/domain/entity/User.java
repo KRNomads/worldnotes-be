@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.example.common.enums.SocialProvider;
 import org.example.user.domain.enums.Role;
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,12 +37,14 @@ public class User {
 
     private String providerId;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     private Boolean isDeleted;
 
     private LocalDateTime deletedAt;
 
+    // === 비즈니스 로직 ===
     @Builder
     public User(UUID id, Role role, String name, String email, SocialProvider provider,
             String providerId, LocalDateTime createdAt, Boolean isDeleted, LocalDateTime deletedAt) {
@@ -56,7 +59,6 @@ public class User {
         this.deletedAt = deletedAt;
     }
 
-    // 정적 팩토리 메서드
     public static User create(String name, String email, SocialProvider provider, String providerId) {
         return User.builder()
                 .id(UUID.randomUUID())
