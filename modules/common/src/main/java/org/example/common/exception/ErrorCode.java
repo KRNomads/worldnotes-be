@@ -12,8 +12,9 @@ public enum ErrorCode {
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저"),
     USER_SOCIAL_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 소셜 토큰 테이블 없음 (userId: %s)"),
-    USER_API_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 API 키 테이블 없음 (userId: %s)"),
-    USER_API_KEY_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 API 키입니다. (userId: %s)"),
+    // ApiKey
+    API_KEY_NOT_FOUND(HttpStatus.UNAUTHORIZED, "일치하는 API Key 없음 (apiKey: %s)"),
+    API_KEY_INVALID(HttpStatus.UNAUTHORIZED, "유효하지 않은 API Key (apiKey: %s)"),
     // Project
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 프로젝트 (projectId: %s)"),
     // Note

@@ -16,7 +16,6 @@ public class UserRegistrationService {
 
     private final UserService userService;
     private final UserSocialTokenService userSocialTokenService;
-    private final UserApiKeyService userApiKeyService;
 
     // 유저 정보 로드 
     public UserDto loadUser(OAuth2UserInfo oAuth2UserInfo) {
@@ -44,7 +43,6 @@ public class UserRegistrationService {
         UUID userId = userDTO.userId();
 
         userSocialTokenService.createUserSocialToken(userId);
-        userApiKeyService.createUserApiKey(userId);
 
         return userDTO;
     }

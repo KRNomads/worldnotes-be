@@ -8,5 +8,5 @@ tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar
 }
 
 application {
-    mainClass.set("org.example.note.NoteServiceApplication")
+    mainClass.set("org.example.NoteServiceApplication")
 }

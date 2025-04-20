@@ -2,7 +2,7 @@ package org.example.auth.adapter.in;
 
 import java.util.UUID;
 
-import org.example.auth.application.ApiKeyIssueService;
+import org.example.auth.application.ApiKeyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,17 +16,17 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @Tag(name = "Auth", description = "인증/인가")
 public class AuthController {
 
-    private ApiKeyIssueService apiKeyIssueService;
+    private final ApiKeyService apiKeyService;
 
     @PostMapping("/api-key")
     @Operation(summary = "API 인증 키 발급", description = "외부에서 API 사용을 위한 유저 API 인증 키 발급")
     public ResponseEntity<String> issueApiKey(@AuthenticationPrincipal UserDetails userDetails) {
         UUID userId = UUID.fromString(userDetails.getUsername());
-        String apiKey = apiKeyIssueService.issueApiKey(userId);
+        String apiKey = apiKeyService.issueApiKey(userId);
         return ResponseEntity.ok(apiKey);
     }
 

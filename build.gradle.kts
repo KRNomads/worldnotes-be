@@ -32,6 +32,7 @@ subprojects {
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web") // 웹 애플리케이션
         implementation("org.springframework.boot:spring-boot-starter-data-jpa") // JPA
+        implementation("org.springframework.boot:spring-boot-starter-websocket") // 웹소켓
         implementation("org.springframework.boot:spring-boot-starter-security") // 시큐리티
         implementation("org.springframework.boot:spring-boot-starter-oauth2-client") // oauth2
 
@@ -41,6 +42,7 @@ subprojects {
         
         // JSON 처리
         implementation("com.fasterxml.jackson.core:jackson-databind")
+        implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
         implementation("org.json:json:20240303")
 
         // PostgreSQL
@@ -63,6 +65,9 @@ subprojects {
         // 테스트
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("org.springframework.security:spring-security-test")
+
+        // JUnit
+        testImplementation ("org.junit.jupiter:junit-jupiter:5.10.1")
     }
 }
 
