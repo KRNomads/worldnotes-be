@@ -25,6 +25,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity
@@ -53,7 +54,6 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // 프론트 연동 시 설정
                 .httpBasic(AbstractHttpConfigurer::disable) // 기본 인증 로그인 비활성화
                 .formLogin(AbstractHttpConfigurer::disable) // 기본 login form 비활성화
-                .logout(AbstractHttpConfigurer::disable) // 기본 logout 비활성화
                 .headers(headers -> headers
                 .addHeaderWriter(
                         new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
@@ -75,6 +75,17 @@ public class SecurityConfig {
                 .userInfoEndpoint(info -> info.userService(oAuth2UserService))
                 .successHandler(oAuth2SuccessHandler)
                 .failureHandler(oAuth2FailureHandler))
+                // 로그아웃 설정
+                .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("http://localhost:3000/")
+                .addLogoutHandler((request, response, authentication) -> { // 로그아웃 핸들러 추가 (세션 무효화 처리)
+                    HttpSession session = request.getSession();
+                    session.invalidate();
+                })
+                .logoutSuccessHandler((request, response, authentication) // 로그아웃 성공 핸들러 추가 (리다이렉션 처리)
+                        -> response.sendRedirect("/index"))
+                .deleteCookies("JSESSIONID", "access_token"))
                 // 필터 설정
                 .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 // 인증 예외 핸들링

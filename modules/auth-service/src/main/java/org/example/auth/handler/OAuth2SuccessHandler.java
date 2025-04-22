@@ -28,7 +28,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             httpSession.setAttribute("user", principalDetails.getName());
 
             // 정상 로그인 시 홈 또는 지정된 URL로 리디렉트
-            response.sendRedirect("/success");
+            response.sendRedirect("http://localhost:3000/dashboard");
         } else {
             throw new IllegalArgumentException("Authentication is not PrincipalDetails");
         }

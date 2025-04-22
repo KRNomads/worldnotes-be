@@ -10,6 +10,8 @@ import org.example.note.application.dto.BlockDto;
 import org.example.note.domain.entity.Block;
 import org.example.note.domain.entity.Note;
 import org.example.note.domain.enums.BlockType;
+import org.example.note.domain.template.BlockTemplate;
+import org.example.note.domain.template.NoteBlockTemplates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,8 @@ public class BlockService {
 
     // === 생성 ===
     @Transactional
-    public BlockDto create(UUID noteId, String title, Boolean isDefault, BlockType type, Map<String, Object> content, Integer position) {
+    public BlockDto create(UUID noteId, String title, Boolean isDefault, BlockType type, Map<String, Object> content,
+            Integer position) {
         Note note = noteJpaRepository.findById(noteId)
                 .orElseThrow(() -> new IllegalArgumentException("Note not found"));
 
@@ -38,6 +41,23 @@ public class BlockService {
 
         Block saved = blockJpaRepository.save(block);
         return BlockDto.from(saved);
+    }
+
+    @Transactional
+    public void createDefaultBlocksFor(Note note) {
+        List<BlockTemplate> templates = NoteBlockTemplates.getTemplates(note.getType());
+
+        templates.forEach(template -> {
+            Block block = Block.create(
+                    note,
+                    template.title(),
+                    template.isDefault(),
+                    template.type(),
+                    template.content(),
+                    template.position()
+            );
+            blockJpaRepository.save(block);
+        });
     }
 
     // === 조회 ===

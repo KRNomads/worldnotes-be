@@ -5,16 +5,16 @@ import java.util.UUID;
 import org.example.note.domain.entity.Project;
 
 public record ProjectDto(
-        UUID id,
+        UUID projectId,
         UUID userId,
-        String name,
+        String title,
         String description) {
 
     public static ProjectDto fromEntity(Project project) {
         return new ProjectDto(
                 project.getId(),
                 project.getUserId(),
-                project.getName(),
+                project.getTitle(),
                 project.getDescription()
         );
     }

@@ -6,7 +6,7 @@ import org.example.note.domain.entity.Block;
 import org.example.note.domain.enums.BlockType;
 
 public record BlockDto(
-        Long id,
+        Long blockId,
         // noteId 만?
         String title,
         boolean isDefault,

@@ -24,7 +24,7 @@ public class Project {
     // FK
     private UUID userId;
 
-    private String name;
+    private String title;
 
     private String description;
 
@@ -40,14 +40,14 @@ public class Project {
 
         Project project = new Project();
         project.userId = userId;
-        project.name = name;
+        project.title = name;
         project.description = description;
         return project;
     }
 
     public void update(String name, String description) {
         validate(name);
-        this.name = name;
+        this.title = name;
         this.description = description;
     }
 

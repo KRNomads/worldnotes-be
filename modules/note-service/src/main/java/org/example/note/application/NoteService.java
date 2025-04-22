@@ -12,6 +12,8 @@ import org.example.note.domain.entity.Project;
 import org.example.note.domain.enums.NoteType;
 import org.example.note.domain.exception.NoteException;
 import org.example.note.domain.exception.ProjectException;
+import org.example.note.domain.template.BlockTemplate;
+import org.example.note.domain.template.NoteBlockTemplates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ public class NoteService {
 
     private final NoteJpaRepository noteJpaRepository;
     private final ProjectJpaRepository projectJpaRepository;
+    private final BlockService blockService;
 
     // === 생성 ===
     @Transactional
@@ -37,6 +40,10 @@ public class NoteService {
                 position);
 
         noteJpaRepository.save(note);
+
+        // 템플릿 기반 블록 생성
+        blockService.createDefaultBlocksFor(note);
+
         return NoteDto.from(note);
     }
 

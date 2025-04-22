@@ -31,13 +31,6 @@ public class ProjectNoteBlockIntegrationTest {
     private ApplicationContext context;
 
     @Test
-    void checkLoadedBeans() {
-        String[] allBeans = context.getBeanDefinitionNames();
-        Arrays.stream(allBeans)
-                .forEach(System.out::println);
-    }
-
-    @Test
     @WithMockUser(
             roles = {"USER"},
             username = "123e4567-e89b-12d3-a456-426614174000",
@@ -76,6 +69,7 @@ public class ProjectNoteBlockIntegrationTest {
         """, projectId);
 
         MvcResult noteResult = mockMvc.perform(post("/api/v1/notes")
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(noteJson))
                 .andDo(result -> {
