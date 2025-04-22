@@ -11,14 +11,18 @@ import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -67,7 +71,14 @@ public class JwtUtil {
 
     // 액세스 토큰 생성
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> extraClaims = new HashMap<>();
+        List<String> roles = userDetails.getAuthorities()
+                .stream()
+                .map(authority -> authority.getAuthority())
+                .collect(Collectors.toList());
+
+        extraClaims.put("roles", roles);
+        return generateToken(extraClaims, userDetails);
     }
 
     // 추가 클레임을 포함한 액세스 토큰 생성
@@ -99,10 +110,69 @@ public class JwtUtil {
                 .compact();
     }
 
+    // 토큰에 권한 정보를 포함하여 생성
+    public String generateTokenWithRoles(String username, List<String> roles) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // 사용자의 권한 정보와 함께 리프레시 토큰 생성
+    public String generateRefreshTokenWithRoles(String username, List<String> roles) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // 토큰에서 권한 정보 추출
+    @SuppressWarnings("unchecked")
+    public List<SimpleGrantedAuthority> extractAuthorities(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            List<String> roles = (List<String>) claims.get("roles");
+
+            if (roles == null || roles.isEmpty()) {
+                return new ArrayList<>(); // 권한이 없는 경우 빈 리스트 반환
+            }
+
+            return roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("권한 정보 추출 실패: {}", e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     // 토큰 검증
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    // UserDetails 없이 토큰 검증
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            logger.error("토큰 검증 실패: {}", e.getMessage());
+            return false;
+        }
     }
 
     // 토큰 검증 (예외 처리)
@@ -120,6 +190,11 @@ public class JwtUtil {
             logger.error("JWT claims string이 비어있습니다: {}", e.getMessage());
         }
         return false;
+    }
+
+    // 리프레시 토큰 만료시간 가져오기
+    public long getRefreshExpiration() {
+        return refreshExpiration;
     }
 
     // 서명 키 가져오기

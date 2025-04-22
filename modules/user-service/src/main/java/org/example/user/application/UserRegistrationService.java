@@ -47,4 +47,10 @@ public class UserRegistrationService {
         return userDTO;
     }
 
+    // 유저 업데이트 추가 할거?
+    // private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
+    //     existingUser.setFirstName(oAuth2UserInfo.getName());
+    //     existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
+    //     return userRepository.save(existingUser);
+    // }
 }

@@ -6,7 +6,7 @@ import org.example.auth.application.dto.PrincipalDetails;
 import org.example.common.enums.SocialProvider;
 import org.example.user.application.dto.OAuth2UserInfo;
 import org.example.user.application.dto.UserDto;
-import org.example.user.application.port.UserOAuthReader;
+import org.example.user.application.port.UserReader;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserOAuthReader userOAuthReader;
+    private final UserReader userOAuthReader;
 
     @Transactional
     @Override
@@ -44,10 +44,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 5. 회원가입 및 로그인
         UserDto userDto = userOAuthReader.loadUser(oAuth2UserInfo);
 
-        log.debug("통과함");
-
         // 6. OAuth2User로 반환 
         return new PrincipalDetails(userDto, oAuth2UserAttributes, userNameAttributeName);
     }
-
 }
