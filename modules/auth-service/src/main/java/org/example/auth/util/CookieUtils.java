@@ -3,6 +3,7 @@ package org.example.auth.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
@@ -10,6 +11,7 @@ import org.springframework.util.SerializationUtils;
 import java.util.Base64;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class CookieUtils {
 
@@ -19,6 +21,7 @@ public class CookieUtils {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) {
+                    log.debug(cookie.getName().toString());
                     return Optional.of(cookie);
                 }
             }

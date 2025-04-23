@@ -2,9 +2,8 @@ package org.example.auth.application;
 
 import java.util.Optional;
 
-import org.example.auth.adapter.in.response.AuthenticationResponse;
 import org.example.auth.util.CookieUtils;
-import org.example.auth.util.JwtUtil;
+import org.example.auth.util.JwtUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class TokenRefreshService {
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtil;
     private final CookieUtils cookieUtiles;
     private final CustomUserDetailsService customUserDetailsService;
 
-    public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public String refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Optional<Cookie> refreshTokenCookie = cookieUtiles.getCookie(request, "refresh_token");
 
         if (refreshTokenCookie.isEmpty()) {
@@ -42,9 +41,7 @@ public class TokenRefreshService {
 
         cookieUtiles.addCookie(response, "refresh_token", newRefreshToken, (int) (jwtUtil.getRefreshExpiration() / 1000));
 
-        return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .build();
+        return accessToken;
     }
 
 }

@@ -25,9 +25,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtUtil {
+public class JwtUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     @Value("${jwt.secret}")
     private String secretKey;

@@ -1,28 +1,27 @@
 package org.example.auth.handler;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
 
 import org.example.auth.application.dto.PrincipalDetails;
 import org.example.auth.util.AppProperties;
 import org.example.auth.util.CookieUtils;
-import org.example.auth.util.JwtUtil;
+import org.example.auth.util.JwtUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtil;
     private final CookieUtils cookieUtils;
     private final AppProperties appProperties;
 
@@ -35,7 +34,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl = determineTargetUrl(request, response, authentication);
 
         if (response.isCommitted()) {
-            logger.debug("응답이 이미 전송되었습니다. " + targetUrl + "로 리다이렉트 할 수 없습니다");
+            log.debug("응답이 이미 전송되었습니다. " + targetUrl + "로 리다이렉트 할 수 없습니다");
             return;
         }
 
@@ -47,14 +46,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             HttpServletResponse response,
             Authentication authentication
     ) {
-        Optional<String> redirectUri = cookieUtils.getCookie(request, "redirect_uri")
-                .map(Cookie::getValue);
+        String redirectUri = (String) appProperties.getOauth2().getRedirectUri();
 
-        if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
-            throw new IllegalArgumentException("승인되지 않은 리다이렉트 URI가 있어 인증을 진행할 수 없습니다");
+        // redirectUri 유효성 검증
+        if (redirectUri == null) {
+            log.error("Unauthorized or invalid Redirect URI: '{}'. Falling back to default target URL.", redirectUri);
+            redirectUri = getDefaultTargetUrl(); // 안전하게 기본 URL 사용
         }
-
-        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
         // 토큰 생성
         PrincipalDetails userPrincipal = (PrincipalDetails) authentication.getPrincipal();
@@ -65,20 +63,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         cookieUtils.addCookie(response, "refresh_token", refreshToken, (int) (jwtUtil.getRefreshExpiration() / 1000));
 
         // 액세스 토큰을 URL 파라미터로 전달
-        return UriComponentsBuilder.fromUriString(targetUrl)
+        return UriComponentsBuilder.fromUriString(redirectUri)
                 .queryParam("token", accessToken)
                 .build().toUriString();
     }
 
-    private boolean isAuthorizedRedirectUri(String uri) {
-        URI clientRedirectUri = URI.create(uri);
-
-        return appProperties.getOauth2().getAuthorizedRedirectUris()
-                .stream()
-                .map(URI::create)
-                .anyMatch(authorizedUri
-                        -> authorizedUri.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
-                && authorizedUri.getPort() == clientRedirectUri.getPort()
-                );
-    }
 }

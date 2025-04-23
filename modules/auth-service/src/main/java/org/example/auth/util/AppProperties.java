@@ -1,8 +1,5 @@
 package org.example.auth.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +15,15 @@ public class AppProperties {
     @Getter
     public static class OAuth2 {
 
-        private List<String> authorizedRedirectUris = new ArrayList<>();
+        private String redirectUri;
 
-        public OAuth2 authorizedRedirectUris(List<String> authorizedRedirectUris) {
-            this.authorizedRedirectUris = authorizedRedirectUris;
+        public void setRedirectUri(String redirectUri) {
+            this.redirectUri = redirectUri;
+        }
+
+        // Fluent-style method (optional)
+        public OAuth2 redirectUri(String redirectUri) {
+            this.redirectUri = redirectUri;
             return this;
         }
     }
