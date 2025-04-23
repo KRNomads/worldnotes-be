@@ -36,7 +36,7 @@ public record PrincipalDetails(
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(
-                new SimpleGrantedAuthority(userDTO.role()));
+                new SimpleGrantedAuthority(userDTO.role().getKey()));
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.example.auth.config;
 
 import org.example.auth.application.CustomOAuth2UserService;
 import org.example.auth.filter.ApiKeyAuthenticationFilter;
-import org.example.auth.filter.JwtAuthenticationFilter;
+import org.example.auth.filter.TokenAuthenticationFilter;
 import org.example.auth.handler.CustomAccessDeniedHandler;
 import org.example.auth.handler.CustomAuthenticationEntryPoint;
 import org.example.auth.handler.OAuth2AuthenticationSuccessHandler;
@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
     private final CustomOAuth2UserService oAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
@@ -85,7 +85,7 @@ public class SecurityConfig {
                         -> response.sendRedirect("/index"))
                 .deleteCookies("JSESSIONID", "refresh_token"))
                 // 필터 설정
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 // 인증 예외 핸들링
                 .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 인증 실패

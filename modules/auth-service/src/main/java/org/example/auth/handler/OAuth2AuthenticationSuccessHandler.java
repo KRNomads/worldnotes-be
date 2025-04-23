@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.example.auth.application.dto.PrincipalDetails;
 import org.example.auth.util.AppProperties;
 import org.example.auth.util.CookieUtils;
-import org.example.auth.util.JwtUtils;
+import org.example.auth.util.TokenV2Utils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final JwtUtils jwtUtil;
+    private final TokenV2Utils tokenV2Utils;
     private final CookieUtils cookieUtils;
     private final AppProperties appProperties;
 
@@ -48,24 +48,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     ) {
         String redirectUri = (String) appProperties.getOauth2().getRedirectUri();
 
-        // redirectUri 유효성 검증
         if (redirectUri == null) {
-            log.error("Unauthorized or invalid Redirect URI: '{}'. Falling back to default target URL.", redirectUri);
-            redirectUri = getDefaultTargetUrl(); // 안전하게 기본 URL 사용
+            log.error("Invalid redirect URI. Falling back to default URL.");
+            redirectUri = getDefaultTargetUrl();
         }
 
-        // 토큰 생성
+        // 사용자 정보 추출 및 token_v2 생성
         PrincipalDetails userPrincipal = (PrincipalDetails) authentication.getPrincipal();
-        String accessToken = jwtUtil.generateToken(userPrincipal);
-        String refreshToken = jwtUtil.generateRefreshToken(userPrincipal);
+        String tokenV2 = tokenV2Utils.generateSessionToken(userPrincipal);
 
-        // 리프레시 토큰을 HttpOnly 쿠키에 저장
-        cookieUtils.addCookie(response, "refresh_token", refreshToken, (int) (jwtUtil.getRefreshExpiration() / 1000));
+        // token_v2 쿠키에 저장
+        cookieUtils.addCookie(response, "token_v2", tokenV2, (int) (tokenV2Utils.getTokenExpiration() / 1000));
 
-        // 액세스 토큰을 URL 파라미터로 전달
         return UriComponentsBuilder.fromUriString(redirectUri)
-                .queryParam("token", accessToken)
                 .build().toUriString();
     }
-
 }

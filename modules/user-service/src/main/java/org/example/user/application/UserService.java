@@ -79,7 +79,7 @@ public class UserService {
     private UserDto user2DTO(User user) {
         return new UserDto(
                 user.getId(),
-                user.getRole().getKey(),
+                user.getRole(),
                 user.getProvider(),
                 user.getProviderId(),
                 user.getEmail(),

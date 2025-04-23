@@ -6,7 +6,6 @@ import org.example.note.application.MessageHandleService;
 import org.example.note.application.message.WebSocketMessage;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class MessageContoller {
 
+    private final WebSocketPublisher publisher;
     private final MessageHandleService messageHandleService;
-    private final SimpMessagingTemplate messagingTemplate;
 
     /**
      * Project Message
@@ -47,7 +46,7 @@ public class MessageContoller {
             }
 
             if (response != null) {
-                messagingTemplate.convertAndSend("/topic/project/" + projectId, response);
+                publisher.publishToProject(projectId, response);
             }
         } catch (Exception e) {
             log.error("Failed to handle message", e);
@@ -82,7 +81,7 @@ public class MessageContoller {
             }
 
             if (response != null) {
-                messagingTemplate.convertAndSend("/topic/project/" + projectId + "/note/" + noteId, response);
+                publisher.publishToNote(projectId, noteId, response);
             }
         } catch (Exception e) {
             log.error("Failed to update block", e);

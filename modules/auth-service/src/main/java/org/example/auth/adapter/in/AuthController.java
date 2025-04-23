@@ -2,20 +2,20 @@ package org.example.auth.adapter.in;
 
 import java.util.UUID;
 
-import org.example.auth.adapter.in.response.AuthenticationResponse;
+import org.example.auth.adapter.in.response.UserInfoResponse;
 import org.example.auth.application.ApiKeyService;
-import org.example.auth.application.TokenRefreshService;
+import org.example.user.application.dto.UserDto;
+import org.example.user.application.port.UserReader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -24,18 +24,16 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Auth", description = "인증/인가")
 public class AuthController {
 
+    private final UserReader userOAuthReader;
     private final ApiKeyService apiKeyService;
-    private final TokenRefreshService tokenRefreshService;
 
-    // 로그아웃
-    @PostMapping("/refresh")
-    @Operation(summary = "액세스 토큰 리프레시", description = "액세스 토큰 재발급")
-    public ResponseEntity<AuthenticationResponse> refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        AuthenticationResponse authResponse = tokenRefreshService.refreshToken(request, response);
-        return ResponseEntity.ok(authResponse);
+    @GetMapping("/me")
+    @Operation(summary = "유저 정보 조회", description = "유저를 식별할 수 있는 최소 정보 제공")
+    public ResponseEntity<UserInfoResponse> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        UserDto userDto = userOAuthReader.loadUser(userId);
+        UserInfoResponse response = new UserInfoResponse(userDto.userId(), userDto.name(), userDto.role());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/api-key")

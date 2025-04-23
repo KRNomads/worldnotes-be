@@ -34,7 +34,17 @@ public class CookieUtils {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        // cookie.setSecure(true);
         cookie.setMaxAge(maxAge);
+
+        cookie.setAttribute("SameSite", "None");
+
+        String headerValue = String.format("%s=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d",
+                name, value, maxAge);
+        response.setHeader("Set-Cookie", headerValue);
+        response.setHeader("Access-Control-Allow-Origin", "https://b491-61-85-165-157.ngrok-free.app");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+
         response.addCookie(cookie);
     }
 
