@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.example.note.adapter.out.BlockJpaRepository;
-import org.example.note.adapter.out.NoteJpaRepository;
+import org.example.note.adapter.out.repository.BlockJpaRepository;
+import org.example.note.adapter.out.repository.NoteJpaRepository;
 import org.example.note.application.dto.BlockDto;
 import org.example.note.domain.entity.Block;
 import org.example.note.domain.entity.Note;
@@ -71,11 +71,29 @@ public class BlockService {
 
     // === 업데이트 ===
     @Transactional
-    public BlockDto update(Long id, String title, BlockType type, Map<String, Object> content, Integer position) {
+    public BlockDto update(Long id, Map<String, Object> updateFields) {
         Block block = blockJpaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Block not found"));
 
-        block.update(title, type, content, position);
+        if (updateFields.containsKey("title")) {
+            block.updateTitle((String) updateFields.get("title"));
+        }
+
+        if (updateFields.containsKey("type")) {
+            block.updateType(BlockType.valueOf((String) updateFields.get("type")));
+        }
+
+        if (updateFields.containsKey("content")) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> content = (Map<String, Object>) updateFields.get("content");
+            block.updateContent(content);
+        }
+
+        if (updateFields.containsKey("position")) {
+            block.updatePosition((Integer) updateFields.get("position"));
+        }
+
+        blockJpaRepository.save(block);
         return BlockDto.from(block);
     }
 

@@ -8,7 +8,7 @@ public record ProjectDto(
         UUID projectId,
         UUID userId,
         String title,
-        String description) {
+        String description) implements NoteObjectDto {
 
     public static ProjectDto fromEntity(Project project) {
         return new ProjectDto(

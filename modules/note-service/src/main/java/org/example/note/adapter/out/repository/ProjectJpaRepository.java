@@ -1,4 +1,4 @@
-package org.example.note.adapter.out;
+package org.example.note.adapter.out.repository;
 
 import java.util.UUID;
 

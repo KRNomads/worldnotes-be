@@ -1,6 +1,7 @@
 package org.example.auth.handler;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.example.auth.application.dto.PrincipalDetails;
 import org.example.auth.util.AppProperties;
@@ -59,6 +60,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         // token_v2 쿠키에 저장
         cookieUtils.addCookie(response, "token_v2", tokenV2, (int) (tokenV2Utils.getTokenExpiration() / 1000));
+
+        Collection<String> setCookieHeaders = response.getHeaders("Set-Cookie");
+        setCookieHeaders.forEach(cookieHeader
+                -> log.info("Set-Cookie 헤더: {}", cookieHeader)
+        );
 
         return UriComponentsBuilder.fromUriString(redirectUri)
                 .build().toUriString();

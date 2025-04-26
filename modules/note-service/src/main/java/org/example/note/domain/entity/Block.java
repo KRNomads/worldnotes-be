@@ -63,12 +63,23 @@ public class Block {
         return block;
     }
 
-    
-    public void update(String title, BlockType type, Map<String, Object> content, Integer position) {
+    public void updateTitle(String title) {
 
         this.title = title;
+    }
+
+    public void updateType(BlockType type) {
+
         this.type = type;
+    }
+
+    public void updateContent(Map<String, Object> content) {
+
         this.content = content;
+    }
+
+    public void updatePosition(Integer position) {
+
         this.position = position;
     }
 }

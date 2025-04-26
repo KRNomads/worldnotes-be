@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.example.common.exception.ErrorCode;
-import org.example.note.adapter.out.ProjectJpaRepository;
+import org.example.note.adapter.out.repository.ProjectJpaRepository;
 import org.example.note.application.dto.ProjectDto;
 import org.example.note.domain.entity.Project;
 import org.example.note.domain.exception.ProjectException;

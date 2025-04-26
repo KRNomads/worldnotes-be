@@ -31,19 +31,19 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    @GetMapping("/{id}")
+    @Operation(summary = "특정 프로젝트 조회")
+    public ResponseEntity<ProjectDto> getProject(@PathVariable UUID id) {
+        ProjectDto projectDto = projectService.findById(id);
+        return ResponseEntity.ok(projectDto);
+    }
+
     @PostMapping
     @Operation(summary = "새 프로젝트 생성", description = "새 프로젝트를 생성함")
     public ResponseEntity<ProjectDto> createProject(@AuthenticationPrincipal UserDetails userDetails,
             @RequestBody ProjectCreateRequest request) {
         UUID userId = UUID.fromString(userDetails.getUsername());
         ProjectDto projectDto = projectService.create(userId, request.name(), request.description());
-        return ResponseEntity.ok(projectDto);
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "특정 프로젝트 조회")
-    public ResponseEntity<ProjectDto> getProject(@PathVariable UUID id) {
-        ProjectDto projectDto = projectService.findById(id);
         return ResponseEntity.ok(projectDto);
     }
 

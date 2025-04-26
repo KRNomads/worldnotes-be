@@ -76,7 +76,7 @@ public class SecurityConfig {
                 // 로그아웃 설정
                 .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("http://localhost:3000/")
+                .logoutSuccessUrl("https://localhost:3000/")
                 .addLogoutHandler((request, response, authentication) -> { // 로그아웃 핸들러 추가 (세션 무효화 처리)
                     HttpSession session = request.getSession();
                     session.invalidate();

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.example.common.exception.ErrorCode;
-import org.example.note.adapter.out.NoteJpaRepository;
-import org.example.note.adapter.out.ProjectJpaRepository;
+import org.example.note.adapter.out.repository.NoteJpaRepository;
+import org.example.note.adapter.out.repository.ProjectJpaRepository;
 import org.example.note.application.dto.NoteDto;
 import org.example.note.domain.entity.Note;
 import org.example.note.domain.entity.Project;

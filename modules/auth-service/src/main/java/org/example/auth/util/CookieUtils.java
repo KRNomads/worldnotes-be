@@ -1,15 +1,17 @@
 package org.example.auth.util;
 
+import java.util.Base64;
+import java.util.Optional;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Component;
+import org.springframework.util.SerializationUtils;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.stereotype.Component;
-import org.springframework.util.SerializationUtils;
-
-import java.util.Base64;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -31,21 +33,15 @@ public class CookieUtils {
     }
 
     public void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        // cookie.setSecure(true);
-        cookie.setMaxAge(maxAge);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(maxAge)
+                .sameSite("None")
+                .build();
 
-        cookie.setAttribute("SameSite", "None");
-
-        String headerValue = String.format("%s=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d",
-                name, value, maxAge);
-        response.setHeader("Set-Cookie", headerValue);
-        response.setHeader("Access-Control-Allow-Origin", "https://b491-61-85-165-157.ngrok-free.app");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

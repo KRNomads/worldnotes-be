@@ -1,4 +1,4 @@
-package org.example.note.adapter.in.ws;
+package org.example.note.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

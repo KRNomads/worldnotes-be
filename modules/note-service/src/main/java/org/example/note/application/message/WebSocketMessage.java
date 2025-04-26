@@ -1,19 +1,43 @@
 package org.example.note.application.message;
 
+import java.util.UUID;
+
 import lombok.Data;
 
 @Data
-public class WebSocketMessage {
+public class WebSocketMessage<T> {
 
-    private String type;
-    private String userId;
-    private Object payload;
+    public enum MessageType {
+        // 프로젝트 이벤트
+        PROJECT_CREATED,
+        PROJECT_UPDATED,
+        PROJECT_DELETED,
+        // 노트 이벤트
+        NOTE_CREATED,
+        NOTE_UPDATED,
+        NOTE_DELETED,
+        // 블록 이벤트
+        BLOCK_CREATED,
+        BLOCK_UPDATED,
+        BLOCK_DELETED,
+        // 협업 상태
+        CURSOR_MOVED,
+        USER_JOINED,
+        USER_LEFT
+    }
 
-    public static WebSocketMessage of(String type, String userId, Object payload) {
-        WebSocketMessage msg = new WebSocketMessage();
-        msg.setType(type);
-        msg.setUserId(userId);
-        msg.setPayload(payload);
-        return msg;
+    private MessageType type;
+    private UUID userId;
+    private T payload;
+
+    private WebSocketMessage() {
+    }
+
+    public static <T> WebSocketMessage<T> of(MessageType type, UUID userId, T payload) {
+        WebSocketMessage<T> message = new WebSocketMessage<>();
+        message.type = type;
+        message.userId = userId;
+        message.payload = payload;
+        return message;
     }
 }

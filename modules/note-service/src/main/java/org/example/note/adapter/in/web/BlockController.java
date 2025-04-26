@@ -3,7 +3,6 @@ package org.example.note.adapter.in.web;
 import java.util.List;
 import java.util.UUID;
 
-import org.example.note.adapter.in.web.request.BlockCreateRequest;
 import org.example.note.adapter.in.web.request.BlockUpdateRequest;
 import org.example.note.application.BlockService;
 import org.example.note.application.dto.BlockDto;
@@ -29,13 +28,6 @@ public class BlockController {
 
     private final BlockService blockService;
 
-    @PostMapping
-    @Operation(summary = "새 블록 생성", description = "새 블록을 생성함")
-    public ResponseEntity<BlockDto> createBlock(@RequestBody BlockCreateRequest request) {
-        BlockDto blockDto = blockService.create(request.noteId(), request.title(), request.isDefault(), request.type(), request.content(), request.position());
-        return ResponseEntity.ok(blockDto);
-    }
-
     @GetMapping("/note/{noteId}")
     @Operation(summary = "노트 전체 블록 조회")
     public ResponseEntity<List<BlockDto>> getBlocksByNote(@PathVariable UUID noteId) {
@@ -43,10 +35,22 @@ public class BlockController {
         return ResponseEntity.ok(blockDtoList);
     }
 
+    // @PostMapping
+    // @Operation(summary = "새 블록 생성", description = "새 블록을 생성함")
+    // public ResponseEntity<BlockDto> createBlock() {
+    //     BlockDto blockDto = blockService.create();
+    //     return ResponseEntity.ok(blockDto);
+    // }
+    // @PostMapping
+    // @Operation(summary = "새 블록 다수? 생성", description = "새 블록을 다수 생성함")
+    // public ResponseEntity<BlockDto> createBlock() {
+    //     BlockDto blockDto = blockService.create();
+    //     return ResponseEntity.ok(blockDto);
+    // }
     @PutMapping("/{id}")
     @Operation(summary = "블록 업데이트")
     public ResponseEntity<BlockDto> updateBlock(@PathVariable Long id, @RequestBody BlockUpdateRequest request) {
-        BlockDto blockDto = blockService.update(id, request.title(), request.type(), request.content(), request.position());
+        BlockDto blockDto = blockService.update(id, request.updateFields());
         return ResponseEntity.ok(blockDto);
     }
 

@@ -1,4 +1,4 @@
-package org.example.note.adapter.out;
+package org.example.note.adapter.out.repository;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BlockJpaRepository extends JpaRepository<Block, Long> {
+
     List<Block> findByNoteId(UUID noteId);
 }
