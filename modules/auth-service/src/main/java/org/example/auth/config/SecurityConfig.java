@@ -85,14 +85,6 @@ public class SecurityConfig {
                 .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("https://localhost:3000/") // 프론트엔드 주소로 변경 고려
-                .addLogoutHandler((request, response, authentication) -> {
-                    HttpSession session = request.getSession(false); // 세션이 없으면 null 반환
-                    if (session != null) {
-                        session.invalidate();
-                    }
-                })
-                .logoutSuccessHandler((request, response, authentication)
-                        -> response.sendRedirect("https://localhost:3000/")) // 프론트엔드 주소로 변경 고려
                 .deleteCookies("JSESSIONID", "token_v2")) // 쿠키 이름 확인 필요
                 // 필터 설정
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
