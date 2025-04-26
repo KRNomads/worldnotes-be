@@ -31,9 +31,11 @@ public class BlockService {
         Note note = noteJpaRepository.findById(noteId)
                 .orElseThrow(() -> new IllegalArgumentException("Note not found"));
 
+        String finalTitle = (title == null || title.trim().isEmpty()) ? "" : title.trim();
+
         Block block = Block.create(
                 note,
-                title,
+                finalTitle,
                 isDefault,
                 type,
                 content,

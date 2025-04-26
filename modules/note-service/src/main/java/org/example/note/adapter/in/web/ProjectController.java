@@ -38,6 +38,14 @@ public class ProjectController {
         return ResponseEntity.ok(projectDto);
     }
 
+    @GetMapping
+    @Operation(summary = "유저 전체 프로젝트 조회")
+    public ResponseEntity<List<ProjectDto>> getProjectsByUser(@AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        List<ProjectDto> projectDtoList = projectService.findByUserId(userId);
+        return ResponseEntity.ok(projectDtoList);
+    }
+
     @PostMapping
     @Operation(summary = "새 프로젝트 생성", description = "새 프로젝트를 생성함")
     public ResponseEntity<ProjectDto> createProject(@AuthenticationPrincipal UserDetails userDetails,
@@ -45,14 +53,6 @@ public class ProjectController {
         UUID userId = UUID.fromString(userDetails.getUsername());
         ProjectDto projectDto = projectService.create(userId, request.name(), request.description());
         return ResponseEntity.ok(projectDto);
-    }
-
-    @GetMapping
-    @Operation(summary = "유저 전체 프로젝트 조회")
-    public ResponseEntity<List<ProjectDto>> getProjectsByUser(@AuthenticationPrincipal UserDetails userDetails) {
-        UUID userId = UUID.fromString(userDetails.getUsername());
-        List<ProjectDto> projectDtoList = projectService.findByUserId(userId);
-        return ResponseEntity.ok(projectDtoList);
     }
 
     @PutMapping("/{id}")

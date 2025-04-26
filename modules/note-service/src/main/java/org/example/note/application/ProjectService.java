@@ -22,11 +22,14 @@ public class ProjectService {
 
     // === 생성 ===
     @Transactional
-    public ProjectDto create(UUID userId, String name, String description) {
+    public ProjectDto create(UUID userId, String title, String description) {
+        String finalTitle = (title == null || title.trim().isEmpty()) ? "새 프로젝트" : title.trim();
+        String finalDescription = (description == null || description.trim().isEmpty()) ? "" : description.trim();
+
         Project project = Project.create(
                 userId,
-                name,
-                description);
+                finalTitle,
+                finalDescription);
         return ProjectDto.fromEntity(projectJpaRepository.save(project));
     }
 

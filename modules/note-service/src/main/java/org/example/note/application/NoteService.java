@@ -12,8 +12,6 @@ import org.example.note.domain.entity.Project;
 import org.example.note.domain.enums.NoteType;
 import org.example.note.domain.exception.NoteException;
 import org.example.note.domain.exception.ProjectException;
-import org.example.note.domain.template.BlockTemplate;
-import org.example.note.domain.template.NoteBlockTemplates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +31,25 @@ public class NoteService {
         Project project = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND, projectId));
 
+        String finalTitle = (title == null || title.trim().isEmpty())
+                ? switch (type) {
+            case BASIC_INFO ->
+                "기본 정보";
+            case CHARACTER ->
+                "새 등장인물";
+            case DETAILS ->
+                "새 설정";
+        }
+                : title.trim();
+
+        // 위치 설정
+        Integer newPosition = 0;
+
         Note note = Note.create(
                 project,
-                title,
+                finalTitle,
                 type,
-                position);
+                newPosition);
 
         noteJpaRepository.save(note);
 
