@@ -25,6 +25,26 @@ public class NoteService {
     private final ProjectJpaRepository projectJpaRepository;
     private final BlockService blockService;
 
+    // === 조회 ===
+    @Transactional(readOnly = true)
+    public NoteDto findById(UUID id) {
+        Note note = noteJpaRepository.findById(id)
+                .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, id));
+        return NoteDto.from(note);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NoteDto> findByProjectId(UUID projectId) {
+        List<Note> notes = noteJpaRepository.findByProjectId(projectId);
+        return notes.stream().map(NoteDto::from).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<NoteDto> findByProjectIdAndType(UUID projectId, NoteType type) {
+        List<Note> notes = noteJpaRepository.findByProjectIdAndType(projectId, type);
+        return notes.stream().map(NoteDto::from).toList();
+    }
+
     // === 생성 ===
     @Transactional
     public NoteDto create(UUID projectId, String title, NoteType type, Integer position) {
@@ -34,7 +54,7 @@ public class NoteService {
         String finalTitle = (title == null || title.trim().isEmpty())
                 ? switch (type) {
             case BASIC_INFO ->
-                "기본 정보";
+                "오류 발생 시켜야함";
             case CHARACTER ->
                 "새 등장인물";
             case DETAILS ->
@@ -59,24 +79,14 @@ public class NoteService {
         return NoteDto.from(note);
     }
 
-    // === 조회 ===
-    @Transactional(readOnly = true)
-    public NoteDto findById(UUID id) {
-        Note note = noteJpaRepository.findById(id)
-                .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, id));
-        return NoteDto.from(note);
-    }
+    public void createDefaultNoteFor(Project project) {
+        Note basicInfoNote = Note.create(
+                project,
+                "기본 정보",
+                NoteType.BASIC_INFO,
+                0);
 
-    @Transactional(readOnly = true)
-    public List<NoteDto> findByProjectId(UUID projectId) {
-        List<Note> notes = noteJpaRepository.findByProjectId(projectId);
-        return notes.stream().map(NoteDto::from).toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<NoteDto> findByProjectIdAndType(UUID projectId, NoteType type) {
-        List<Note> notes = noteJpaRepository.findByProjectIdAndType(projectId, type);
-        return notes.stream().map(NoteDto::from).toList();
+        noteJpaRepository.save(basicInfoNote);
     }
 
     // === 업데이트 ===

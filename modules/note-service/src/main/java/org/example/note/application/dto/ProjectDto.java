@@ -10,7 +10,7 @@ public record ProjectDto(
         String title,
         String description) implements NoteObjectDto {
 
-    public static ProjectDto fromEntity(Project project) {
+    public static ProjectDto from(Project project) {
         return new ProjectDto(
                 project.getId(),
                 project.getUserId(),

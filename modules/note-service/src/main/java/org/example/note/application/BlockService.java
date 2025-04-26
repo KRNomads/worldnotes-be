@@ -24,6 +24,15 @@ public class BlockService {
     private final BlockJpaRepository blockJpaRepository;
     private final NoteJpaRepository noteJpaRepository;
 
+    // === 조회 ===
+    @Transactional(readOnly = true)
+    public List<BlockDto> findByNoteId(UUID noteId) {
+        List<Block> blocks = blockJpaRepository.findByNoteId(noteId);
+        return blocks.stream()
+                .map(BlockDto::from)
+                .toList();
+    }
+
     // === 생성 ===
     @Transactional
     public BlockDto create(UUID noteId, String title, Boolean isDefault, BlockType type, Map<String, Object> content,
@@ -60,15 +69,6 @@ public class BlockService {
             );
             blockJpaRepository.save(block);
         });
-    }
-
-    // === 조회 ===
-    @Transactional(readOnly = true)
-    public List<BlockDto> findByNoteId(UUID noteId) {
-        List<Block> blocks = blockJpaRepository.findByNoteId(noteId);
-        return blocks.stream()
-                .map(BlockDto::from)
-                .toList();
     }
 
     // === 업데이트 ===

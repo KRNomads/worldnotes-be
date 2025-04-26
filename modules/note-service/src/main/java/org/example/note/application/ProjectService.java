@@ -18,7 +18,24 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ProjectService {
 
+    private final NoteService noteService;
     private final ProjectJpaRepository projectJpaRepository;
+
+    // === 조회 ===
+    @Transactional(readOnly = true)
+    public ProjectDto findById(UUID id) {
+        Project project = projectJpaRepository.findById(id)
+                .orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND, id));
+        return ProjectDto.from(project);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectDto> findByUserId(UUID userId) {
+        return projectJpaRepository.findAll().stream()
+                .filter(p -> p.getUserId().equals(userId)) // 성능 개선 필요
+                .map(ProjectDto::from)
+                .collect(Collectors.toList());
+    }
 
     // === 생성 ===
     @Transactional
@@ -30,23 +47,13 @@ public class ProjectService {
                 userId,
                 finalTitle,
                 finalDescription);
-        return ProjectDto.fromEntity(projectJpaRepository.save(project));
-    }
 
-    // === 조회 ===
-    @Transactional(readOnly = true)
-    public ProjectDto findById(UUID id) {
-        Project project = projectJpaRepository.findById(id)
-                .orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND, id));
-        return ProjectDto.fromEntity(project);
-    }
+        projectJpaRepository.save(project);
 
-    @Transactional(readOnly = true)
-    public List<ProjectDto> findByUserId(UUID userId) {
-        return projectJpaRepository.findAll().stream()
-                .filter(p -> p.getUserId().equals(userId)) // 성능 개선 필요
-                .map(ProjectDto::fromEntity)
-                .collect(Collectors.toList());
+        // 디폴트 basic info 생성
+        noteService.createDefaultNoteFor(project);
+
+        return ProjectDto.from(project);
     }
 
     // === 업데이트 ===
@@ -57,7 +64,7 @@ public class ProjectService {
 
         project.update(name, description);
 
-        return ProjectDto.fromEntity(project);
+        return ProjectDto.from(project);
     }
 
     // === 삭제 ===

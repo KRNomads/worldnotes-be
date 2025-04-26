@@ -57,49 +57,49 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // 필요시 enable
                 // --- CORS 설정 수정 ---
                 // .cors(AbstractHttpConfigurer::disable) // 이 줄을 제거하거나 아래와 같이 변경
-                .cors(Customizer.withDefaults())      // 정의된 CorsConfigurationSource Bean을 사용하도록 변경
+                .cors(Customizer.withDefaults()) // 정의된 CorsConfigurationSource Bean을 사용하도록 변경
                 // ----------------------
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers
-                       .addHeaderWriter(
-                               new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                .addHeaderWriter(
+                        new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
                 // 세션 방식
                 .sessionManagement(session -> session
-                       .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                       .requestMatchers(
-                               new AntPathRequestMatcher("/"),
-                               new AntPathRequestMatcher("/swagger-ui/**"),
-                               new AntPathRequestMatcher("/v3/api-docs/**"),
-                               new AntPathRequestMatcher("/api/v1/auth/refresh"))
-                       .permitAll()
-                       .anyRequest().hasAnyRole("USER", "ADMIN"))
+                .requestMatchers(
+                        new AntPathRequestMatcher("/"),
+                        new AntPathRequestMatcher("/swagger-ui/**"),
+                        new AntPathRequestMatcher("/v3/api-docs/**"),
+                        new AntPathRequestMatcher("/api/v1/auth/refresh"))
+                .permitAll()
+                .anyRequest().hasAnyRole("USER", "ADMIN"))
                 // OAuth2 로그인 설정
                 .oauth2Login(oauth -> oauth
-                       .userInfoEndpoint(info -> info.userService(oAuth2UserService))
-                       .successHandler(oAuth2AuthenticationSuccessHandler)
-                       .failureHandler(oAuth2FailureHandler))
+                .userInfoEndpoint(info -> info.userService(oAuth2UserService))
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2FailureHandler))
                 // 로그아웃 설정
                 .logout(logout -> logout
-                       .logoutUrl("/logout")
-                       .logoutSuccessUrl("https://localhost:3000/") // 프론트엔드 주소로 변경 고려
-                       .addLogoutHandler((request, response, authentication) -> {
-                           HttpSession session = request.getSession(false); // 세션이 없으면 null 반환
-                           if (session != null) {
-                              session.invalidate();
-                           }
-                       })
-                       .logoutSuccessHandler((request, response, authentication)
-                               -> response.sendRedirect("https://localhost:3000/")) // 프론트엔드 주소로 변경 고려
-                       .deleteCookies("JSESSIONID", "refresh_token")) // 쿠키 이름 확인 필요
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("https://localhost:3000/") // 프론트엔드 주소로 변경 고려
+                .addLogoutHandler((request, response, authentication) -> {
+                    HttpSession session = request.getSession(false); // 세션이 없으면 null 반환
+                    if (session != null) {
+                        session.invalidate();
+                    }
+                })
+                .logoutSuccessHandler((request, response, authentication)
+                        -> response.sendRedirect("https://localhost:3000/")) // 프론트엔드 주소로 변경 고려
+                .deleteCookies("JSESSIONID", "token_v2")) // 쿠키 이름 확인 필요
                 // 필터 설정
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 // 인증 예외 핸들링
                 .exceptionHandling(ex -> ex
-                       .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                       .accessDeniedHandler(new CustomAccessDeniedHandler()));
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(new CustomAccessDeniedHandler()));
 
         return http.build();
     }
