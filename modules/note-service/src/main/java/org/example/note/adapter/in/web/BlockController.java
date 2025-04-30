@@ -3,7 +3,9 @@ package org.example.note.adapter.in.web;
 import java.util.List;
 import java.util.UUID;
 
+import org.example.note.adapter.in.web.request.BlockCreateRequest;
 import org.example.note.adapter.in.web.request.BlockUpdateRequest;
+import org.example.note.adapter.in.web.request.BlocksCreateRequest;
 import org.example.note.application.BlockService;
 import org.example.note.application.dto.BlockDto;
 import org.springframework.http.ResponseEntity;
@@ -35,18 +37,20 @@ public class BlockController {
         return ResponseEntity.ok(blockDtoList);
     }
 
-    // @PostMapping
-    // @Operation(summary = "새 블록 생성", description = "새 블록을 생성함")
-    // public ResponseEntity<BlockDto> createBlock() {
-    //     BlockDto blockDto = blockService.create();
-    //     return ResponseEntity.ok(blockDto);
-    // }
-    // @PostMapping
-    // @Operation(summary = "새 블록 다수? 생성", description = "새 블록을 다수 생성함")
-    // public ResponseEntity<BlockDto> createBlock() {
-    //     BlockDto blockDto = blockService.create();
-    //     return ResponseEntity.ok(blockDto);
-    // }
+    @PostMapping("/block")
+    @Operation(summary = "새 단일 블록 생성", description = "새 블록 하나를 생성합니다.")
+    public ResponseEntity<BlockDto> createBlock(@RequestBody BlockCreateRequest request) {
+        BlockDto blockDto = blockService.create(request.noteId(), request.toParam());
+        return ResponseEntity.ok(blockDto);
+    }
+
+    @PostMapping("/blocks")
+    @Operation(summary = "여러 블록 생성", description = "새 블록 여러 개를 생성합니다.")
+    public ResponseEntity<List<BlockDto>> createBlocks(@RequestBody BlocksCreateRequest request) {
+        List<BlockDto> blockDtos = blockService.createMultiple(request.blocks().get(0).noteId(), request.toParams());
+        return ResponseEntity.ok(blockDtos);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "블록 업데이트")
     public ResponseEntity<BlockDto> updateBlock(@PathVariable Long id, @RequestBody BlockUpdateRequest request) {

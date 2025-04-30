@@ -54,9 +54,13 @@ public class Note {
         return note;
     }
 
-    public void update(String title, Integer position) {
+    public void update(String title) {
 
         this.title = title;
+    }
+
+    public void updatePosition(Integer position) {
+
         this.position = position;
     }
 

@@ -1,10 +1,10 @@
 package org.example.note.application.dto;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.example.note.domain.entity.Block;
 import org.example.note.domain.enums.BlockType;
+import org.example.note.domain.property.BlockProperties;
 
 public record BlockDto(
         Long blockId,
@@ -13,7 +13,7 @@ public record BlockDto(
         String title,
         boolean isDefault,
         BlockType type,
-        Map<String, Object> content,
+        BlockProperties properties,
         Integer position) implements NoteObjectDto {
 
     public static BlockDto from(Block block) {
@@ -24,7 +24,7 @@ public record BlockDto(
                 block.getTitle(),
                 block.isDefault(),
                 block.getType(),
-                block.getContent(),
+                block.getProperties(),
                 block.getPosition()
         );
     }

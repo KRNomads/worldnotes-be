@@ -1,14 +1,16 @@
 package org.example.note.domain.entity;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import org.example.note.domain.enums.BlockType;
+import org.example.note.domain.property.BlockProperties;
+import org.example.note.domain.property.BlockPropertiesConverter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,11 +38,14 @@ public class Block {
 
     private boolean isDefault;
 
+    private String fieldKey;
+
     @Enumerated(EnumType.STRING)
     private BlockType type;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Object> content;
+    @Convert(converter = BlockPropertiesConverter.class)
+    private BlockProperties properties;
 
     private Integer position;
 
@@ -51,14 +56,16 @@ public class Block {
     private LocalDateTime updatedAt;
 
     // ==== 비즈니스 로직 ==== ( 유효성 검사 ?)
-    public static Block create(Note note, String title, boolean isDefault, BlockType type, Map<String, Object> content, Integer position) {
+    public static Block create(Note note, String title, boolean isDefault, String fieldKey, BlockType type, BlockProperties properties,
+            Integer position) {
 
         Block block = new Block();
         block.note = note;
         block.title = title;
         block.isDefault = isDefault;
+        block.fieldKey = fieldKey;
         block.type = type;
-        block.content = content;
+        block.properties = properties;
         block.position = position;
         return block;
     }
@@ -73,9 +80,9 @@ public class Block {
         this.type = type;
     }
 
-    public void updateContent(Map<String, Object> content) {
+    public void updateContent(BlockProperties properties) {
 
-        this.content = content;
+        this.properties = properties;
     }
 
     public void updatePosition(Integer position) {

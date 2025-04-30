@@ -31,13 +31,6 @@ public class NoteController {
 
     private final NoteService noteService;
 
-    @PostMapping
-    @Operation(summary = "새 노트 생성", description = "새 노트를 생성함")
-    public ResponseEntity<NoteDto> createNote(@RequestBody NoteCreateRequest request) {
-        NoteDto noteDto = noteService.create(request.projectId(), request.title(), request.type(), request.position());
-        return ResponseEntity.ok(noteDto);
-    }
-
     @GetMapping("/{id}")
     @Operation(summary = "특정 노트 조회")
     public ResponseEntity<NoteDto> getNote(@PathVariable UUID id) {
@@ -62,10 +55,17 @@ public class NoteController {
         return ResponseEntity.ok(noteDtoList);
     }
 
+    @PostMapping
+    @Operation(summary = "새 노트 생성", description = "새 노트를 생성함")
+    public ResponseEntity<NoteDto> createNote(@RequestBody NoteCreateRequest request) {
+        NoteDto noteDto = noteService.create(request.projectId(), request.title(), request.type(), request.position());
+        return ResponseEntity.ok(noteDto);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "노트 업데이트")
     public ResponseEntity<NoteDto> updateNote(@PathVariable UUID id, @RequestBody NoteUpdateRequest request) {
-        NoteDto noteDto = noteService.update(id, request.title(), request.position());
+        NoteDto noteDto = noteService.update(id, request.title());
         return ResponseEntity.ok(noteDto);
     }
 

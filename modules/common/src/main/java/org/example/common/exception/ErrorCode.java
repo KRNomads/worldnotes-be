@@ -19,6 +19,8 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 프로젝트 (projectId: %s)"),
     // Note
     NOTE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 노트 (noteId: %s)"),
+    // Block
+    BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 블럭 (blockId: %s)"),
     // default
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "Invalid request."), // 잘못된 요청
     UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "Unauthorized."), // 인증되지 않은 사용자의 요청

@@ -63,7 +63,8 @@ public class NoteService {
                 : title.trim();
 
         // 위치 설정
-        Integer newPosition = 0;
+        Integer maxPosition = noteJpaRepository.findMaxPositionByProjectId(projectId).orElse(0);
+        Integer newPosition = maxPosition + 100;
 
         Note note = Note.create(
                 project,
@@ -91,14 +92,15 @@ public class NoteService {
 
     // === 업데이트 ===
     @Transactional
-    public NoteDto update(UUID id, String title, Integer position) {
+    public NoteDto update(UUID id, String title) {
         Note note = noteJpaRepository.findById(id)
                 .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, id));
 
-        note.update(title, position);
+        note.update(title);
         return NoteDto.from(note);
     }
 
+    // position 업데이트 로직
     // === 삭제 ===
     @Transactional
     public void delete(UUID id) {
@@ -106,6 +108,7 @@ public class NoteService {
             throw new NoteException(ErrorCode.NOTE_NOT_FOUND, id);
         }
         noteJpaRepository.deleteById(id);
+
     }
 
 }
