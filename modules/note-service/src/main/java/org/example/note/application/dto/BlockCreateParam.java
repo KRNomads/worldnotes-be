@@ -8,8 +8,7 @@ public record BlockCreateParam(
         Boolean isDefault,
         String fieldKey,
         BlockType type,
-        BlockProperties properties,
-        Integer position
+        BlockProperties properties
         ) {
 
 }

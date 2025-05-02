@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.example.auth.adapter.in.response.UserInfoResponse;
 import org.example.auth.application.ApiKeyService;
+import org.example.auth.util.CookieUtils;
 import org.example.user.application.dto.UserDto;
 import org.example.user.application.port.UserReader;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Auth", description = "인증/인가")
 public class AuthController {
 
+    private final CookieUtils cookieUtils;
     private final UserReader userOAuthReader;
     private final ApiKeyService apiKeyService;
 
@@ -34,6 +38,15 @@ public class AuthController {
         UserDto userDto = userOAuthReader.loadUser(userId);
         UserInfoResponse response = new UserInfoResponse(userDto.userId(), userDto.name(), userDto.role());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "유저 로그아웃 후 쿠키 삭제")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        // 'access_token' 쿠키 삭제
+        cookieUtils.deleteCookie(request, response, "token_v2");
+        cookieUtils.deleteCookie(request, response, "JSESSIONID");
+        return ResponseEntity.ok("Logged out successfully");
     }
 
     @PostMapping("/api-key")

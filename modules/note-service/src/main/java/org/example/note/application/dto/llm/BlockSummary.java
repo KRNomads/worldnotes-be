@@ -1,7 +1,8 @@
-package org.example.note.application.dto;
+package org.example.note.application.dto.llm;
 
 import java.util.Map;
 
+import org.example.note.application.dto.BlockDto;
 import org.example.note.domain.enums.BlockType;
 import org.example.note.domain.property.ImageBlockProperties;
 import org.example.note.domain.property.TextBlockProperties;

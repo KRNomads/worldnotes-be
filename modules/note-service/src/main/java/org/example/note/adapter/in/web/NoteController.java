@@ -58,7 +58,7 @@ public class NoteController {
     @PostMapping
     @Operation(summary = "새 노트 생성", description = "새 노트를 생성함")
     public ResponseEntity<NoteDto> createNote(@RequestBody NoteCreateRequest request) {
-        NoteDto noteDto = noteService.create(request.projectId(), request.title(), request.type(), request.position());
+        NoteDto noteDto = noteService.create(request.projectId(), request.title(), request.type());
         return ResponseEntity.ok(noteDto);
     }
 

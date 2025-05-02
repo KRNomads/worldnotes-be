@@ -15,6 +15,7 @@ import org.example.note.domain.enums.BlockType;
 import org.example.note.domain.exception.BlockExeption;
 import org.example.note.domain.exception.NoteException;
 import org.example.note.domain.property.BlockProperties;
+import org.example.note.domain.property.TextBlockProperties;
 import org.example.note.domain.template.BlockTemplate;
 import org.example.note.domain.template.NoteBlockTemplates;
 import org.springframework.stereotype.Service;
@@ -129,11 +130,32 @@ public class BlockService {
 
         if (updateFields.containsKey("properties")) {
             BlockProperties properties = (BlockProperties) updateFields.get("properties");
-            block.updateContent(properties);
+            block.updateProperty(properties);
         }
 
         blockJpaRepository.save(block);
         return BlockDto.from(block);
+    }
+
+    @Transactional
+    public List<BlockDto> updateDefaultBlocks(UUID noteId, Map<String, String> fieldValues) {
+        List<Block> blocks = blockJpaRepository.findByNoteId(noteId);
+
+        blocks.stream()
+                .filter(Block::isDefault) // BlockType에 따라 업데이트 다르게 하는 로직 추가 필요
+                .forEach(block -> {
+                    String fieldKey = block.getFieldKey();
+                    if (fieldValues.containsKey(fieldKey)) {
+                        String value = fieldValues.get(fieldKey);
+                        block.updateProperty(new TextBlockProperties(value));
+                    }
+                });
+
+        List<Block> saved = blockJpaRepository.saveAll(blocks);
+
+        return saved.stream()
+                .map(BlockDto::from)
+                .toList();
     }
 
     // position 업데이트 로직

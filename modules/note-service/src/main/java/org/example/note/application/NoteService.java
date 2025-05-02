@@ -45,20 +45,34 @@ public class NoteService {
         return notes.stream().map(NoteDto::from).toList();
     }
 
+    @Transactional(readOnly = true)
+    public NoteDto findBasicInfoByProjectId(UUID projectId) {
+        Note note = noteJpaRepository.findByProjectIdAndType(projectId, NoteType.BASIC_INFO)
+                .stream().findFirst()
+                .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, projectId));
+
+        return NoteDto.from(note);
+    }
+
     // === 생성 ===
     @Transactional
-    public NoteDto create(UUID projectId, String title, NoteType type, Integer position) {
+    public NoteDto create(UUID projectId, String title, NoteType type) {
+
+        if (type == NoteType.BASIC_INFO) {
+            throw new IllegalArgumentException("BASIC_INFO 타입의 노트는 생성할 수 없습니다.");
+        }
+
         Project project = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND, projectId));
 
         String finalTitle = (title == null || title.trim().isEmpty())
                 ? switch (type) {
-            case BASIC_INFO ->
-                "오류 발생 시켜야함";
             case CHARACTER ->
                 "새 등장인물";
             case DETAILS ->
                 "새 설정";
+            default ->
+                throw new IllegalStateException("알 수 없는 노트 타입입니다.");
         }
                 : title.trim();
 
@@ -88,6 +102,8 @@ public class NoteService {
                 0);
 
         noteJpaRepository.save(basicInfoNote);
+
+        blockService.createDefaultBlocksFor(basicInfoNote);
     }
 
     // === 업데이트 ===

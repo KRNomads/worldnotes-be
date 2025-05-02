@@ -1,6 +1,8 @@
-package org.example.note.application.dto;
+package org.example.note.application.dto.llm;
 
 import java.util.UUID;
+
+import org.example.note.application.dto.NoteDto;
 
 public record NoteSummary(
         UUID noteId,

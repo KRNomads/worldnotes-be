@@ -1,18 +1,23 @@
 package org.example.note.application;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.example.note.application.dto.BlockCreateParam;
 import org.example.note.application.dto.BlockDto;
-import org.example.note.application.dto.BlockSummary;
-import org.example.note.application.dto.NoteContentDto;
 import org.example.note.application.dto.NoteDto;
-import org.example.note.application.dto.NoteSummary;
 import org.example.note.application.dto.ProjectDto;
-import org.example.note.application.dto.ProjectMetaDto;
+import org.example.note.application.dto.llm.BlockSummary;
+import org.example.note.application.dto.llm.NoteContentDto;
+import org.example.note.application.dto.llm.NoteSummary;
+import org.example.note.application.dto.llm.ProjectMetaDto;
+import org.example.note.domain.enums.BlockType;
 import org.example.note.domain.enums.NoteType;
+import org.example.note.domain.property.TextBlockProperties;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -74,8 +79,85 @@ public class LlmService {
                 noteDto.noteId(),
                 noteDto.title(),
                 noteDto.type(),
-                blocks
-        );
+                blocks);
     }
 
+    // 프로젝트 기본 설정 수정
+    public void updateBasicInfo(UUID projectId, String title, String genre, String keycontent) {
+
+        // 노트 로드
+        NoteDto noteDto = noteService.findBasicInfoByProjectId(projectId);
+
+        // 기본 필드 수정
+        Map<String, String> defaultFieldValues = new HashMap<>();
+        defaultFieldValues.put("title", title);
+        defaultFieldValues.put("genre", genre);
+        defaultFieldValues.put("keycontent", keycontent);
+        List<BlockDto> updatedBlockDtoList = blockService.updateDefaultBlocks(noteDto.noteId(), defaultFieldValues);
+
+    }
+
+    // 캐릭터 설정 생성
+    public NoteContentDto makeCharacter(UUID projectId, String noteTitle, String age, String tribe,
+            Map<String, String> extraFields) {
+
+        // 노트 생성
+        NoteDto noteDto = noteService.create(projectId, noteTitle, NoteType.CHARACTER);
+
+        // 기본 필드 수정
+        Map<String, String> defaultFieldValues = new HashMap<>();
+        defaultFieldValues.put("age", age);
+        defaultFieldValues.put("tribe", tribe);
+        List<BlockDto> updatedBlockDtoList = blockService.updateDefaultBlocks(noteDto.noteId(), defaultFieldValues);
+
+        // 추가 필드 생성
+        List<BlockCreateParam> params = new ArrayList<>();
+        extraFields.forEach((key, value) -> {
+            params.add(new BlockCreateParam(key, false, null, BlockType.TEXT, new TextBlockProperties(value)));
+        });
+        List<BlockDto> newBlockDtoList = blockService.createMultiple(noteDto.noteId(), params);
+
+        // 두 개의 블록 리스트 합치기
+        List<BlockDto> combinedBlockDtoList = new ArrayList<>();
+        combinedBlockDtoList.addAll(updatedBlockDtoList);
+        combinedBlockDtoList.addAll(newBlockDtoList);
+
+        // BlockDto 리스트를 BlockSummary 리스트로 변환
+        List<BlockSummary> blocks = combinedBlockDtoList.stream()
+                .map(BlockSummary::from)
+                .collect(Collectors.toList());
+
+        return new NoteContentDto(
+                noteDto.noteId(),
+                noteDto.title(),
+                noteDto.type(),
+                blocks);
+    }
+
+    // 세계관 설정 생성
+    public NoteContentDto makeWorldbuilding(UUID projectId, String noteTitle, Map<String, String> extraFields) {
+
+        // 노트 생성
+        NoteDto noteDto = noteService.create(projectId, noteTitle, NoteType.DETAILS);
+
+        // 추가 필드 생성
+        List<BlockCreateParam> params = new ArrayList<>();
+        extraFields.forEach((key, value) -> {
+            params.add(new BlockCreateParam(key, false, null, BlockType.TEXT, new TextBlockProperties(value)));
+        });
+        List<BlockDto> newBlockDtoList = blockService.createMultiple(noteDto.noteId(), params);
+
+        // BlockDto 리스트를 BlockSummary 리스트로 변환
+        List<BlockSummary> blocks = newBlockDtoList.stream()
+                .map(BlockSummary::from)
+                .collect(Collectors.toList());
+
+        return new NoteContentDto(
+                noteDto.noteId(),
+                noteDto.title(),
+                noteDto.type(),
+                blocks);
+    }
+
+    // 노트를 title을 기준으로 내용 업데이트 & 추가
 }

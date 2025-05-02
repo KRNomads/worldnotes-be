@@ -7,7 +7,6 @@ import org.example.auth.handler.CustomAccessDeniedHandler;
 import org.example.auth.handler.CustomAuthenticationEntryPoint;
 import org.example.auth.handler.OAuth2AuthenticationSuccessHandler;
 import org.example.auth.handler.OAuth2FailureHandler;
-import org.example.auth.handler.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer; // Customizer 임포트 추가
@@ -26,7 +25,6 @@ import org.springframework.web.cors.CorsConfiguration; // CORS 관련 임포트 
 import org.springframework.web.cors.CorsConfigurationSource; // CORS 관련 임포트 추가
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // CORS 관련 임포트 추가
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import java.util.List; // List 임포트 추가
 
@@ -39,9 +37,9 @@ public class SecurityConfig {
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomOAuth2UserService oAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Bean
@@ -81,16 +79,12 @@ public class SecurityConfig {
                 .userInfoEndpoint(info -> info.userService(oAuth2UserService))
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2FailureHandler))
-                // 로그아웃 설정
-                .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("https://localhost:3000/") // 프론트엔드 주소로 변경 고려
-                .deleteCookies("JSESSIONID", "token_v2")) // 쿠키 이름 확인 필요
                 // 필터 설정
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 // 인증 예외 핸들링
                 .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(new CustomAccessDeniedHandler()));
 
         return http.build();

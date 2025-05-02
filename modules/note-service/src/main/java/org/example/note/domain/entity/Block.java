@@ -14,6 +14,7 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -30,7 +31,7 @@ public class Block {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "note_id", nullable = false)
     private Note note;
 
@@ -80,7 +81,7 @@ public class Block {
         this.type = type;
     }
 
-    public void updateContent(BlockProperties properties) {
+    public void updateProperty(BlockProperties properties) {
 
         this.properties = properties;
     }

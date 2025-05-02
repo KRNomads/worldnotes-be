@@ -12,8 +12,7 @@ public record BlockCreateRequest(
         Boolean isDefault,
         String fieldKey,
         BlockType type,
-        BlockProperties properties,
-        Integer position) {
+        BlockProperties properties) {
 
     public BlockCreateParam toParam() {
         return new BlockCreateParam(
@@ -21,8 +20,7 @@ public record BlockCreateRequest(
                 isDefault,
                 fieldKey,
                 type,
-                properties,
-                position
+                properties
         );
     }
 }

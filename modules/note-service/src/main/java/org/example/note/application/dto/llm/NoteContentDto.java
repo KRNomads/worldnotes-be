@@ -1,4 +1,4 @@
-package org.example.note.application.dto;
+package org.example.note.application.dto.llm;
 
 import java.util.List;
 import java.util.UUID;

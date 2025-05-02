@@ -3,15 +3,19 @@ package org.example.note.adapter.in.web;
 import java.util.List;
 import java.util.UUID;
 
+import org.example.note.adapter.in.web.request.llm.NewCharacterRequest;
+import org.example.note.adapter.in.web.request.llm.NewDetailsRequest;
 import org.example.note.application.LlmService;
-import org.example.note.application.dto.NoteContentDto;
 import org.example.note.application.dto.ProjectDto;
-import org.example.note.application.dto.ProjectMetaDto;
+import org.example.note.application.dto.llm.NoteContentDto;
+import org.example.note.application.dto.llm.ProjectMetaDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,6 +50,20 @@ public class LlmController {
     @Operation(summary = "노트 조회")
     public ResponseEntity<NoteContentDto> readNote(@PathVariable UUID noteId) {
         NoteContentDto NoteContentdto = llmService.readNote(noteId);
+        return ResponseEntity.ok(NoteContentdto);
+    }
+
+    @PostMapping("/note/character")
+    @Operation(summary = "캐릭터 생성")
+    public ResponseEntity<NoteContentDto> makeCharacter(@RequestBody NewCharacterRequest request) {
+        NoteContentDto NoteContentdto = llmService.makeCharacter(request.projectId(), request.noteTitle(), request.age(), request.tribe(), request.extraFields());
+        return ResponseEntity.ok(NoteContentdto);
+    }
+
+    @PostMapping("/note/details")
+    @Operation(summary = "세계관 설정 생성")
+    public ResponseEntity<NoteContentDto> makeWorldbuilding(@RequestBody NewDetailsRequest request) {
+        NoteContentDto NoteContentdto = llmService.makeWorldbuilding(request.projectId(), request.noteTitle(), request.extraFields());
         return ResponseEntity.ok(NoteContentdto);
     }
 

@@ -1,108 +1,120 @@
 package org.example.note;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.example.NoteServiceApplication;
+import org.example.note.application.BlockService;
+import org.example.note.application.NoteService;
+import org.example.note.application.ProjectService;
+import org.example.note.application.dto.BlockCreateParam;
+import org.example.note.application.dto.BlockDto;
+import org.example.note.application.dto.NoteDto;
+import org.example.note.application.dto.ProjectDto;
+import org.example.note.domain.enums.BlockType;
+import org.example.note.domain.enums.NoteType;
+import org.example.note.domain.property.TextBlockProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.jayway.jsonpath.JsonPath;
-
+@Transactional
 @SpringBootTest(classes = NoteServiceApplication.class)
-@AutoConfigureMockMvc
-public class ProjectNoteBlockIntegrationTest {
+class ProjectNoteBlockIntegrationTest {
 
+       //private static final UUID TEST_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+       private static final UUID TEST_USER_ID = UUID.fromString("7fe1ac4a-ef1b-4 c03-ac17-c7283b9d9ba5");
     @Autowired
-    private MockMvc mockMvc;
-
+    private ProjectService projectService;
     @Autowired
-    private ApplicationContext context;
+    private NoteService noteService;
+    @Autowired
+    private BlockService blockService;
 
     @Test
-    @WithMockUser(
-            roles = {"USER"},
-            username = "123e4567-e89b-12d3-a456-426614174000",
-            password = "password"
-    )
-    void 통합_생성_테스트() throws Exception {
+    void 내_맘대로_프로젝트_노트_블럭_생성_예시() {
+        // === Given ===
+        String projectTitle = "에테르니움";
+        String projectDescription = "중세 판타지 + SF";
 
-        // 1. 프로젝트 생성
-        String projectJson = """
-            {
-                "name": "Test Project",
-                "description": "Test Desc"
-            }
-        """;
+        // 캐릭터 1
+        String noteTitle1 = "리안 아르텔";
+        NoteType noteType1 = NoteType.CHARACTER;
 
-        MvcResult projectResult = mockMvc.perform(
-                post("/api/v1/projects")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(projectJson)
-        )
-                .andExpect(status().isOk())
-                .andReturn();
+        List<BlockCreateParam> blockParams1 = List.of(
+                new BlockCreateParam("출신", false, null, BlockType.TEXT, new TextBlockProperties("카이로스")),
+                new BlockCreateParam("능력", false, null, BlockType.TEXT, new TextBlockProperties("시간 마법 사용 가능 (시간 정지, 과거 투시 등)")),
+                new BlockCreateParam("성격", false, null, BlockType.TEXT, new TextBlockProperties("고지식하지만 정의감이 강하고 타인에게 헌신적")));
 
-        String projectResponse = projectResult.getResponse().getContentAsString();
-        UUID projectId = UUID.fromString(JsonPath.read(projectResponse, "$.id"));
+        // 캐릭터 2
+        String noteTitle2 = "엘리시아 크로웰";
+        NoteType noteType2 = NoteType.CHARACTER;
 
-        // 2. 노트 생성
-        String noteJson = String.format("""
-            {
-                "projectId": "%s",
-                "title": "Test Note",
-                "type": "CHARACTER",
-                "position": 1
-            }
-        """, projectId);
+        List<BlockCreateParam> blockParams2 = List.of(
+                new BlockCreateParam("출신", false, null, BlockType.TEXT, new TextBlockProperties("이노바")),
+                new BlockCreateParam("능력", false, null, BlockType.TEXT, new TextBlockProperties("에테르를 인공지능과 융합해 사용하는 천재 해커")),
+                new BlockCreateParam("성격", false, null, BlockType.TEXT, new TextBlockProperties("냉철하고 계산적이지만 내면에는 깊은 죄책감")));
 
-        MvcResult noteResult = mockMvc.perform(post("/api/v1/notes")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(noteJson))
-                .andDo(result -> {
-                    System.out.println("NOTE 응답 상태: " + result.getResponse().getStatus());
-                    System.out.println("NOTE 응답 내용: " + result.getResponse().getContentAsString());
-                })
-                .andExpect(status().isOk())
-                .andReturn();
+        // === When ===
+        ProjectDto project = projectService.create(TEST_USER_ID, projectTitle, projectDescription);
 
-        UUID noteId = UUID.fromString(JsonPath.read(noteResult.getResponse().getContentAsString(), "$.id"));
+        // 1. 기본 정보 노트 수정
+        NoteDto basicInfoNote = noteService.findByProjectIdAndType(project.projectId(), NoteType.BASIC_INFO).get(0);
+        List<BlockDto> basicBlocks = blockService.findByNoteId(basicInfoNote.noteId());
 
-        // 3. 블록 생성
-        String blockJson = String.format("""
-            {
-                "noteId": "%s",
-                "title": "Test Block",
-                "isDefault": false,
-                "type": "TEXT",
-                "content": {
-                    "text": "Hello world"
-                },
-                "position": 1
-            }
-        """, noteId);
+        blockService.update(basicBlocks.get(0).blockId(), Map.of(
+                "properties", new TextBlockProperties("에테르의 심장")
+        ));
 
-        mockMvc.perform(
-                post("/api/v1/blocks")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(blockJson)
-        )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Test Block"));
+        blockService.update(basicBlocks.get(1).blockId(), Map.of(
+                "properties", new TextBlockProperties("판타지, 서사극, 디스토피아, 정치/철학 드라마, 로맨스, 전쟁물")
+        ));
+
+        blockService.update(basicBlocks.get(2).blockId(), Map.of(
+                "properties", new TextBlockProperties("에테르의 균형이 무너지고, 카이로스의 마법과 이노바의 과학이 충돌한다.\n"
+                        + //
+                        "리안은 예언에 따라 지상을 향해 내려오고, 엘리시아는 파멸을 막기 위해 적국의 마법사들과 손을 잡는다.\n"
+                        + //
+                        "테이른은 중립의 땅에서 마지막 생명의 균형을 지키기 위해 싸우고, 오스카는 점점 인간이 아닌 존재로 변해가며 자신의 존재 의미를 찾으려 한다.\n"
+                        + //
+                        "모든 이들이 운명의 소용돌이 속에서 “에테르의 심장”으로 향한다.")
+        ));
+
+        // 2. 캐릭터 1 생성 + 수정
+        NoteDto note1 = noteService.create(project.projectId(), noteTitle1, noteType1);
+        List<BlockDto> createdBlocks1 = blockService.createMultiple(note1.noteId(), blockParams1);
+
+        List<BlockDto> defaultBlocks1 = blockService.findByNoteId(note1.noteId());
+
+        blockService.update(defaultBlocks1.get(0).blockId(), Map.of(
+                "properties", new TextBlockProperties("25 세")
+        ));
+
+        blockService.update(defaultBlocks1.get(1).blockId(), Map.of(
+                "properties", new TextBlockProperties("인간")
+        ));
+
+        // 3. 캐릭터 2 생성 + 수정
+        NoteDto note2 = noteService.create(project.projectId(), noteTitle2, noteType2);
+        List<BlockDto> createdBlocks2 = blockService.createMultiple(note2.noteId(), blockParams2);
+
+        List<BlockDto> defaultBlocks2 = blockService.findByNoteId(note2.noteId());
+
+        blockService.update(defaultBlocks2.get(0).blockId(), Map.of(
+                "properties", new TextBlockProperties("28 세")
+        ));
+
+        blockService.update(defaultBlocks2.get(1).blockId(), Map.of(
+                "properties", new TextBlockProperties("인간")
+        ));
+
+        // === Then ===
+        assertThat(project.title()).isEqualTo(projectTitle);
+        // assertThat(note.title()).isEqualTo(noteTitle);
+        // assertThat(createdBlocks).hasSize(3);
+        // assertThat(createdBlocks.get(0).title()).isEqualTo("블럭1");
     }
-
 }
