@@ -24,29 +24,33 @@ public class NoteService {
     private final NoteJpaRepository noteJpaRepository;
     private final ProjectJpaRepository projectJpaRepository;
     private final BlockService blockService;
+    private final ProjectPermissionService projectPermissionService;
+    private final NotePermissionService notePermissionService;
 
     // === 조회 ===
     @Transactional(readOnly = true)
-    public NoteDto findById(UUID id) {
-        Note note = noteJpaRepository.findById(id)
-                .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, id));
+    public NoteDto findById(UUID userId, UUID id) {
+        Note note = notePermissionService.getNoteIfOwner(userId, id);
         return NoteDto.from(note);
     }
 
     @Transactional(readOnly = true)
-    public List<NoteDto> findByProjectId(UUID projectId) {
+    public List<NoteDto> findByProjectId(UUID userId, UUID projectId) {
+        projectPermissionService.checkIsOwner(userId, projectId);
         List<Note> notes = noteJpaRepository.findByProjectId(projectId);
         return notes.stream().map(NoteDto::from).toList();
     }
 
     @Transactional(readOnly = true)
-    public List<NoteDto> findByProjectIdAndType(UUID projectId, NoteType type) {
+    public List<NoteDto> findByProjectIdAndType(UUID userId, UUID projectId, NoteType type) {
+        projectPermissionService.checkIsOwner(userId, projectId);
         List<Note> notes = noteJpaRepository.findByProjectIdAndType(projectId, type);
         return notes.stream().map(NoteDto::from).toList();
     }
 
     @Transactional(readOnly = true)
     public NoteDto findBasicInfoByProjectId(UUID projectId) {
+        // 권한체크 필요 x
         Note note = noteJpaRepository.findByProjectIdAndType(projectId, NoteType.BASIC_INFO)
                 .stream().findFirst()
                 .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, projectId));
@@ -56,7 +60,8 @@ public class NoteService {
 
     // === 생성 ===
     @Transactional
-    public NoteDto create(UUID projectId, String title, NoteType type) {
+    public NoteDto create(UUID userId, UUID projectId, String title, NoteType type) {
+        projectPermissionService.checkIsOwner(userId, projectId);
 
         if (type == NoteType.BASIC_INFO) {
             throw new IllegalArgumentException("BASIC_INFO 타입의 노트는 생성할 수 없습니다.");
@@ -95,6 +100,7 @@ public class NoteService {
     }
 
     public void createDefaultNoteFor(Project project) {
+        // 권한체크 필요 x
         Note basicInfoNote = Note.create(
                 project,
                 "기본 정보",
@@ -108,9 +114,8 @@ public class NoteService {
 
     // === 업데이트 ===
     @Transactional
-    public NoteDto update(UUID id, String title) {
-        Note note = noteJpaRepository.findById(id)
-                .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, id));
+    public NoteDto update(UUID userId, UUID id, String title) {
+        Note note = notePermissionService.getNoteIfOwner(userId, id);
 
         note.update(title);
         return NoteDto.from(note);
@@ -119,12 +124,9 @@ public class NoteService {
     // position 업데이트 로직
     // === 삭제 ===
     @Transactional
-    public void delete(UUID id) {
-        if (!noteJpaRepository.existsById(id)) {
-            throw new NoteException(ErrorCode.NOTE_NOT_FOUND, id);
-        }
-        noteJpaRepository.deleteById(id);
-
+    public void delete(UUID userId, UUID id) {
+        Note note = notePermissionService.getNoteIfOwner(userId, id);
+        noteJpaRepository.delete(note);
     }
 
 }

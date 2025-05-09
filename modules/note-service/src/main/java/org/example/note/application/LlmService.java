@@ -39,13 +39,13 @@ public class LlmService {
     }
 
     // 프로젝트 메타 정보 조회
-    public ProjectMetaDto projectMeta(UUID projectId) {
+    public ProjectMetaDto projectMeta(UUID userId, UUID projectId) {
 
         // 프로젝트 조회
-        ProjectDto projectDto = projectService.findById(projectId);
+        ProjectDto projectDto = projectService.findById(userId, projectId); // 권한 체크크
 
         // 프로젝트 전체 Note 조회
-        List<NoteDto> noteDtoList = noteService.findByProjectId(projectId);
+        List<NoteDto> noteDtoList = noteService.findByProjectId(userId, projectId); // 권한 체크크
 
         // NoteType별 분류 및 요약으로 변환
         Map<NoteType, List<NoteSummary>> meta = noteDtoList.stream()
@@ -62,13 +62,13 @@ public class LlmService {
     }
 
     // 특정 노트의 내용 조회
-    public NoteContentDto readNote(UUID noteId) {
+    public NoteContentDto readNote(UUID userId, UUID noteId) {
 
         // 노트 조회
-        NoteDto noteDto = noteService.findById(noteId);
+        NoteDto noteDto = noteService.findById(userId, noteId); // 권한 체크크
 
         // 노트 전체 Block 조회
-        List<BlockDto> blockDtoList = blockService.findByNoteId(noteId);
+        List<BlockDto> blockDtoList = blockService.findByNoteId(userId, noteId); // 권한 체크크
 
         // Block 요약으로 변환
         List<BlockSummary> blocks = blockDtoList.stream()
@@ -83,7 +83,7 @@ public class LlmService {
     }
 
     // 프로젝트 기본 설정 수정
-    public void updateBasicInfo(UUID projectId, String title, String genre, String keycontent) {
+    public void updateBasicInfo(UUID userId, UUID projectId, String title, String genre, String keycontent) {
 
         // 노트 로드
         NoteDto noteDto = noteService.findBasicInfoByProjectId(projectId);
@@ -98,11 +98,11 @@ public class LlmService {
     }
 
     // 캐릭터 설정 생성
-    public NoteContentDto makeCharacter(UUID projectId, String noteTitle, String age, String tribe,
+    public NoteContentDto makeCharacter(UUID userId, UUID projectId, String noteTitle, String age, String tribe,
             Map<String, String> extraFields) {
 
         // 노트 생성
-        NoteDto noteDto = noteService.create(projectId, noteTitle, NoteType.CHARACTER);
+        NoteDto noteDto = noteService.create(userId, projectId, noteTitle, NoteType.CHARACTER); // 권한 체크크
 
         // 기본 필드 수정
         Map<String, String> defaultFieldValues = new HashMap<>();
@@ -115,7 +115,7 @@ public class LlmService {
         extraFields.forEach((key, value) -> {
             params.add(new BlockCreateParam(key, false, null, BlockType.TEXT, new TextBlockProperties(value)));
         });
-        List<BlockDto> newBlockDtoList = blockService.createMultiple(noteDto.noteId(), params);
+        List<BlockDto> newBlockDtoList = blockService.createMultiple(userId, noteDto.noteId(), params); // 권한 체크크
 
         // 두 개의 블록 리스트 합치기
         List<BlockDto> combinedBlockDtoList = new ArrayList<>();
@@ -135,17 +135,17 @@ public class LlmService {
     }
 
     // 세계관 설정 생성
-    public NoteContentDto makeWorldbuilding(UUID projectId, String noteTitle, Map<String, String> extraFields) {
+    public NoteContentDto makeWorldbuilding(UUID userId, UUID projectId, String noteTitle, Map<String, String> extraFields) {
 
         // 노트 생성
-        NoteDto noteDto = noteService.create(projectId, noteTitle, NoteType.DETAILS);
+        NoteDto noteDto = noteService.create(userId, projectId, noteTitle, NoteType.DETAILS);  // 권한 체크크
 
         // 추가 필드 생성
         List<BlockCreateParam> params = new ArrayList<>();
         extraFields.forEach((key, value) -> {
             params.add(new BlockCreateParam(key, false, null, BlockType.TEXT, new TextBlockProperties(value)));
         });
-        List<BlockDto> newBlockDtoList = blockService.createMultiple(noteDto.noteId(), params);
+        List<BlockDto> newBlockDtoList = blockService.createMultiple(userId, noteDto.noteId(), params); // 권한 체크크
 
         // BlockDto 리스트를 BlockSummary 리스트로 변환
         List<BlockSummary> blocks = newBlockDtoList.stream()

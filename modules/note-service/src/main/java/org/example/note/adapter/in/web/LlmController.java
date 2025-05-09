@@ -41,29 +41,37 @@ public class LlmController {
 
     @GetMapping("/project/{projectId}")
     @Operation(summary = "프로젝트 메타 정보 조회")
-    public ResponseEntity<ProjectMetaDto> getProjectMetaInfo(@PathVariable UUID projectId) {
-        ProjectMetaDto projectMetaDto = llmService.projectMeta(projectId);
+    public ResponseEntity<ProjectMetaDto> getProjectMetaInfo(@AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable UUID projectId) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        ProjectMetaDto projectMetaDto = llmService.projectMeta(userId, projectId);
         return ResponseEntity.ok(projectMetaDto);
     }
 
     @GetMapping("/note/{noteId}")
     @Operation(summary = "노트 조회")
-    public ResponseEntity<NoteContentDto> readNote(@PathVariable UUID noteId) {
-        NoteContentDto NoteContentdto = llmService.readNote(noteId);
+    public ResponseEntity<NoteContentDto> readNote(@AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable UUID noteId) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        NoteContentDto NoteContentdto = llmService.readNote(userId, noteId);
         return ResponseEntity.ok(NoteContentdto);
     }
 
     @PostMapping("/note/character")
     @Operation(summary = "캐릭터 생성")
-    public ResponseEntity<NoteContentDto> makeCharacter(@RequestBody NewCharacterRequest request) {
-        NoteContentDto NoteContentdto = llmService.makeCharacter(request.projectId(), request.noteTitle(), request.age(), request.tribe(), request.extraFields());
+    public ResponseEntity<NoteContentDto> makeCharacter(@AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody NewCharacterRequest request) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        NoteContentDto NoteContentdto = llmService.makeCharacter(userId, request.projectId(), request.noteTitle(), request.age(), request.tribe(), request.extraFields());
         return ResponseEntity.ok(NoteContentdto);
     }
 
     @PostMapping("/note/details")
     @Operation(summary = "세계관 설정 생성")
-    public ResponseEntity<NoteContentDto> makeWorldbuilding(@RequestBody NewDetailsRequest request) {
-        NoteContentDto NoteContentdto = llmService.makeWorldbuilding(request.projectId(), request.noteTitle(), request.extraFields());
+    public ResponseEntity<NoteContentDto> makeWorldbuilding(@AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody NewDetailsRequest request) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        NoteContentDto NoteContentdto = llmService.makeWorldbuilding(userId, request.projectId(), request.noteTitle(), request.extraFields());
         return ResponseEntity.ok(NoteContentdto);
     }
 

@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.example.common.exception.ErrorCode;
 import org.example.note.adapter.out.repository.ProjectJpaRepository;
 import org.example.note.application.dto.ProjectDto;
 import org.example.note.domain.entity.Project;
-import org.example.note.domain.exception.ProjectException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,20 +17,20 @@ import lombok.RequiredArgsConstructor;
 public class ProjectService {
 
     private final NoteService noteService;
+    private final ProjectPermissionService projectPermissionService;
     private final ProjectJpaRepository projectJpaRepository;
 
     // === 조회 ===
     @Transactional(readOnly = true)
-    public ProjectDto findById(UUID id) {
-        Project project = projectJpaRepository.findById(id)
-                .orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND, id));
+    public ProjectDto findById(UUID userId, UUID projectId) {
+        Project project = projectPermissionService.getProjectIfOwner(userId, projectId);
         return ProjectDto.from(project);
     }
 
     @Transactional(readOnly = true)
     public List<ProjectDto> findByUserId(UUID userId) {
-        return projectJpaRepository.findAll().stream()
-                .filter(p -> p.getUserId().equals(userId)) // 성능 개선 필요
+        List<Project> projects = projectJpaRepository.findProjectsOwnedByUser(userId);
+        return projects.stream()
                 .map(ProjectDto::from)
                 .collect(Collectors.toList());
     }
@@ -58,9 +56,8 @@ public class ProjectService {
 
     // === 업데이트 ===
     @Transactional
-    public ProjectDto update(UUID id, String name, String description) {
-        Project project = projectJpaRepository.findById(id)
-                .orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND, id));
+    public ProjectDto update(UUID userId, UUID projectId, String name, String description) {
+        Project project = projectPermissionService.getProjectIfOwner(userId, projectId);
 
         project.update(name, description);
 
@@ -69,10 +66,9 @@ public class ProjectService {
 
     // === 삭제 ===
     @Transactional
-    public void delete(UUID id) {
-        if (!projectJpaRepository.existsById(id)) {
-            throw new ProjectException(ErrorCode.PROJECT_NOT_FOUND, id);
-        }
-        projectJpaRepository.deleteById(id);
+    public void delete(UUID userId, UUID projectId) {
+        Project project = projectPermissionService.getProjectIfOwner(userId, projectId);
+        projectJpaRepository.delete(project);
     }
+
 }

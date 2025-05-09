@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.example.note.domain.enums.MemberRole;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,8 +26,8 @@ public class Project {
     @GeneratedValue
     private UUID id;
 
-    // FK
-    private UUID userId;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectMember> members = new ArrayList<>();
 
     private String title;
 
@@ -46,9 +47,9 @@ public class Project {
         validate(name);
 
         Project project = new Project();
-        project.userId = userId;
         project.title = name;
         project.description = description;
+        project.addMember(userId, MemberRole.OWNER);
         return project;
     }
 
@@ -65,6 +66,15 @@ public class Project {
         if (name.length() > 100) {
             throw new IllegalArgumentException("프로젝트 이름은 100자 이하로 입력해주세요.");
         }
+    }
+
+    public void addMember(UUID userId, MemberRole role) {
+        ProjectMember member = new ProjectMember(this, userId, role);
+        this.members.add(member);
+    }
+
+    public void removeMember(UUID userId) {
+        members.removeIf(member -> member.getUserId().equals(userId));
     }
 
 }

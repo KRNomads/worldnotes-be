@@ -53,7 +53,7 @@ public class LlmServiceTest {
                 "모든 이들이 운명의 소용돌이 속에서 “에테르의 심장”으로 향한다.";
 
         // === When ===
-        llmService.updateBasicInfo(project.projectId(), title, genre, keycontent);
+        llmService.updateBasicInfo(TEST_USER_ID, project.projectId(), title, genre, keycontent);
 
         // === Then === 
     }
@@ -75,7 +75,7 @@ public class LlmServiceTest {
         extraFields.put("무기", "에테르 나무창, 자연의 분노");
 
         // === When ===
-        llmService.makeCharacter(project.projectId(), name, age, tribe, extraFields);
+        llmService.makeCharacter(TEST_USER_ID, project.projectId(), name, age, tribe, extraFields);
 
         // === Then === 
     }
@@ -97,7 +97,7 @@ public class LlmServiceTest {
         extraFields.put("사회적 영향", "마법 사용 능력이 귀족 계급 형성과 정치 권력의 핵심 요소가 된다.");
 
         // === When ===
-        llmService.makeWorldbuilding(project.projectId(), noteName, extraFields);
+        llmService.makeWorldbuilding(TEST_USER_ID, project.projectId(), noteName, extraFields);
 
         // === Then === 
     }

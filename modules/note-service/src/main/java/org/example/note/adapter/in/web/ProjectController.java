@@ -31,10 +31,11 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{projectId}")
     @Operation(summary = "특정 프로젝트 조회")
-    public ResponseEntity<ProjectDto> getProject(@PathVariable UUID id) {
-        ProjectDto projectDto = projectService.findById(id);
+    public ResponseEntity<ProjectDto> getProject(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID projectId) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        ProjectDto projectDto = projectService.findById(userId, projectId);
         return ResponseEntity.ok(projectDto);
     }
 
@@ -55,17 +56,19 @@ public class ProjectController {
         return ResponseEntity.ok(projectDto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{projectId}")
     @Operation(summary = "프로젝트 업데이트")
-    public ResponseEntity<ProjectDto> updateProject(@PathVariable UUID id, @RequestBody ProjectUpdateRequest request) {
-        ProjectDto projectDto = projectService.update(id, request.name(), request.description());
+    public ResponseEntity<ProjectDto> updateProject(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID projectId, @RequestBody ProjectUpdateRequest request) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        ProjectDto projectDto = projectService.update(userId, projectId, request.name(), request.description());
         return ResponseEntity.ok(projectDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{projectId}")
     @Operation(summary = "프로젝트 삭제")
-    public ResponseEntity<Void> deleteProject(@PathVariable UUID id) {
-        projectService.delete(id);
+    public ResponseEntity<Void> deleteProject(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID projectId) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        projectService.delete(userId, projectId);
         return ResponseEntity.noContent().build();
     }
 

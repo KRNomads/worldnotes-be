@@ -1,12 +1,7 @@
 package org.example.auth.filter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.Arrays;
 
 import org.example.auth.util.TokenV2Utils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,8 +10,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Arrays;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,7 +57,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     /**
      * 토큰을 검증하고 인증 객체를 생성하여 SecurityContext에 설정
      */
-    private void authenticateWithToken(String token) {
+    private void authenticateWithToken(String token) throws Exception {
         // 토큰 복호화 및 검증
         UserDetails userDetails = tokenV2Utils.validateAndGetUserDetails(token);
 

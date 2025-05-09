@@ -33,15 +33,16 @@ public class BlockUpdatedHandler implements WebSocketMessageHandler {
 
         // 블록 콘텐츠 업데이트
         BlockDto updatedBlock = blockService.update(
-            payload.blockId(),
-            payload.updateFields()
+                message.getUserId(),
+                payload.blockId(),
+                payload.updateFields()
         );
 
         // 갱신된 블록 정보를 포함한 새 메시지 생성
         WebSocketMessage<BlockPayload> newMessage = WebSocketMessage.of(
-            message.getType(),
-            message.getUserId(),
-            BlockPayload.fromDto(updatedBlock)
+                message.getType(),
+                message.getUserId(),
+                BlockPayload.fromDto(updatedBlock)
         );
 
         // // 노트 단위 브로드캐스트   수정 필요 !!!!!!!!!!!!
@@ -50,7 +51,6 @@ public class BlockUpdatedHandler implements WebSocketMessageHandler {
         //     updatedBlock.noteId(),
         //     newMessage
         // );
-
         log.debug("🔄 블록이 수정되었습니다. blockId={}, userId={}", payload.blockId(), message.getUserId());
     }
 }

@@ -17,10 +17,13 @@ public enum ErrorCode {
     API_KEY_INVALID(HttpStatus.UNAUTHORIZED, "유효하지 않은 API Key (apiKey: %s)"),
     // Project
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 프로젝트 (projectId: %s)"),
+    PROJECT_FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없는 유저의 프로젝트 접근 (projectId: %s)"),
     // Note
     NOTE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 노트 (noteId: %s)"),
+    NOTE_FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없는 유저의 노트 접근 (noteId: %s)"),
     // Block
     BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 블럭 (blockId: %s)"),
+    BLOCK_FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없는 유저의 블럭 접근 (blockId: %s)"),
     // default
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "Invalid request."), // 잘못된 요청
     UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "Unauthorized."), // 인증되지 않은 사용자의 요청

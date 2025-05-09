@@ -55,8 +55,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         // 사용자 정보 추출 및 token_v2 생성
-        PrincipalDetails userPrincipal = (PrincipalDetails) authentication.getPrincipal();
-        String tokenV2 = tokenV2Utils.generateSessionToken(userPrincipal);
+        String tokenV2;
+        try {
+            PrincipalDetails userPrincipal = (PrincipalDetails) authentication.getPrincipal();
+            tokenV2 = tokenV2Utils.generateSessionToken(userPrincipal);
+        } catch (Exception e) {
+            log.error("토큰 생성 실패: {}", e.getMessage(), e);
+            throw new IllegalStateException("토큰 생성 중 오류 발생", e);
+        }
 
         // token_v2 쿠키에 저장
         cookieUtils.addCookie(response, "token_v2", tokenV2, (int) (tokenV2Utils.getTokenExpiration() / 1000));

@@ -4,16 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.example.common.exception.ErrorCode;
 import org.example.note.adapter.out.repository.BlockJpaRepository;
-import org.example.note.adapter.out.repository.NoteJpaRepository;
 import org.example.note.application.dto.BlockCreateParam;
 import org.example.note.application.dto.BlockDto;
 import org.example.note.domain.entity.Block;
 import org.example.note.domain.entity.Note;
 import org.example.note.domain.enums.BlockType;
-import org.example.note.domain.exception.BlockExeption;
-import org.example.note.domain.exception.NoteException;
 import org.example.note.domain.property.BlockProperties;
 import org.example.note.domain.property.TextBlockProperties;
 import org.example.note.domain.template.BlockTemplate;
@@ -28,11 +24,13 @@ import lombok.RequiredArgsConstructor;
 public class BlockService {
 
     private final BlockJpaRepository blockJpaRepository;
-    private final NoteJpaRepository noteJpaRepository;
+    private final BlockPermissionService blockPermissionService;
+    private final NotePermissionService notePermissionService;
 
     // === 조회 ===
     @Transactional(readOnly = true)
-    public List<BlockDto> findByNoteId(UUID noteId) {
+    public List<BlockDto> findByNoteId(UUID userId, UUID noteId) {
+        notePermissionService.checkIsOwner(userId, noteId);
         List<Block> blocks = blockJpaRepository.findByNoteId(noteId);
         return blocks.stream()
                 .map(BlockDto::from)
@@ -41,9 +39,8 @@ public class BlockService {
 
     // === 생성 ===
     @Transactional
-    public BlockDto create(UUID noteId, BlockCreateParam param) {
-        Note note = noteJpaRepository.findById(noteId)
-                .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, noteId));
+    public BlockDto create(UUID userId, UUID noteId, BlockCreateParam param) {
+        Note note = notePermissionService.getNoteIfOwner(userId, noteId);
 
         String title = (param.title() == null || param.title().trim().isEmpty()) ? "" : param.title().trim();
 
@@ -64,9 +61,8 @@ public class BlockService {
     }
 
     @Transactional
-    public List<BlockDto> createMultiple(UUID noteId, List<BlockCreateParam> params) {
-        Note note = noteJpaRepository.findById(noteId)
-                .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, noteId));
+    public List<BlockDto> createMultiple(UUID userId, UUID noteId, List<BlockCreateParam> params) {
+        Note note = notePermissionService.getNoteIfOwner(userId, noteId);
 
         Integer maxPosition = blockJpaRepository.findMaxPositionByNoteId(noteId).orElse(0);
         int[] position = {maxPosition};
@@ -116,9 +112,8 @@ public class BlockService {
 
     // === 업데이트 ===
     @Transactional
-    public BlockDto update(Long id, Map<String, Object> updateFields) {
-        Block block = blockJpaRepository.findById(id)
-                .orElseThrow(() -> new BlockExeption(ErrorCode.NOTE_NOT_FOUND, id));
+    public BlockDto update(UUID userId, Long id, Map<String, Object> updateFields) {
+        Block block = blockPermissionService.getBlockIfOwner(userId, id);
 
         if (updateFields.containsKey("title")) {
             block.updateTitle((String) updateFields.get("title"));
@@ -129,6 +124,7 @@ public class BlockService {
         }
 
         if (updateFields.containsKey("properties")) {
+            // 잘작동하는지 모름?
             BlockProperties properties = (BlockProperties) updateFields.get("properties");
             block.updateProperty(properties);
         }
@@ -161,8 +157,9 @@ public class BlockService {
     // position 업데이트 로직
     // === 삭제 ===
     @Transactional
-    public void delete(Long id) {
-        blockJpaRepository.deleteById(id);
+    public void delete(UUID userId, Long id) {
+        Block block = blockPermissionService.getBlockIfOwner(userId, id);
+        blockJpaRepository.delete(block);
     }
 
 }
