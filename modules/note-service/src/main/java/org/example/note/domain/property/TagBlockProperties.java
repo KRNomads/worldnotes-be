@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TagBlockProperties implements BlockProperties {
 
-    private final String type = "tags";
+    private final String type = "TAGS";
     private List<String> tags;
 }

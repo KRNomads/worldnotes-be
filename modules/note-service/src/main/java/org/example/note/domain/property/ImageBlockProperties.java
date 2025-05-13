@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ImageBlockProperties implements BlockProperties {
 
-    private final String type = "image";
+    private final String type = "IMAGE";
     private String url;           // 이미지 URL
     private String caption;
 }

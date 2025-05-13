@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TextBlockProperties implements BlockProperties {
 
-    private final String type = "text";
+    private final String type = "TEXT";
     private String value;
 }

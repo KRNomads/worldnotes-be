@@ -4,13 +4,11 @@ import java.time.LocalDateTime;
 
 import org.example.note.domain.enums.BlockType;
 import org.example.note.domain.property.BlockProperties;
-import org.example.note.domain.property.BlockPropertiesConverter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -45,7 +43,6 @@ public class Block {
     private BlockType type;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Convert(converter = BlockPropertiesConverter.class)
     private BlockProperties properties;
 
     private Integer position;
