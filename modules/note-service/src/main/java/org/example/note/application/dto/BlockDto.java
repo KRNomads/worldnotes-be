@@ -12,6 +12,7 @@ public record BlockDto(
         UUID noteId,
         String title,
         boolean isDefault,
+        String fieldKey,
         BlockType type,
         BlockProperties properties,
         Integer position) implements NoteObjectDto {
@@ -23,6 +24,7 @@ public record BlockDto(
                 block.getNote().getId(),
                 block.getTitle(),
                 block.isDefault(),
+                block.getFieldKey(),
                 block.getType(),
                 block.getProperties(),
                 block.getPosition()
