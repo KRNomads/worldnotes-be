@@ -12,17 +12,17 @@ public class NoteBlockTemplates {
         return switch (noteType) {
             case BASIC_INFO ->
                 List.of(
-                new BlockTemplate("작품 제목", true, "title", BlockType.TEXT, new TextBlockProperties(""), 0),
-                new BlockTemplate("장르", true, "genre", BlockType.TEXT, new TextBlockProperties(""), 0),
-                new BlockTemplate("주요 내용", true, "keycontent", BlockType.TEXT, new TextBlockProperties(""), 0)
+                new BlockTemplate("작품 제목", "title", BlockType.TEXT, new TextBlockProperties(""), 0),
+                new BlockTemplate("장르", "genre", BlockType.TEXT, new TextBlockProperties(""), 0),
+                new BlockTemplate("주요 내용", "keycontent", BlockType.TEXT, new TextBlockProperties(""), 0)
                 );
             case CHARACTER ->
                 List.of(
-                new BlockTemplate("나이", true, "age", BlockType.TEXT, new TextBlockProperties(""), 0),
-                new BlockTemplate("종족", true, "tribe", BlockType.TEXT, new TextBlockProperties(""), 0)
+                new BlockTemplate("나이", "age", BlockType.TEXT, new TextBlockProperties(""), 0),
+                new BlockTemplate("종족", "tribe", BlockType.TEXT, new TextBlockProperties(""), 0)
                 );
             case DETAILS ->
-                List.of( // new BlockTemplate("세계관 설정", false, null, BlockType.TEXT, new TextBlockProperties(""), 0)
+                List.of( // new BlockTemplate("세계관 설정", null, BlockType.TEXT, new TextBlockProperties(""), 0)
                 );
         };
     }

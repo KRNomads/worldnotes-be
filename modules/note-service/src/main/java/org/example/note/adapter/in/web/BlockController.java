@@ -64,7 +64,7 @@ public class BlockController {
     public ResponseEntity<BlockDto> updateBlock(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long blockId,
             @RequestBody BlockUpdateRequest request) {
         UUID userId = UUID.fromString(userDetails.getUsername());
-        BlockDto blockDto = blockService.update(userId, blockId, request.updateFields());
+        BlockDto blockDto = blockService.update(userId, blockId, request.toParam());
         return ResponseEntity.ok(blockDto);
     }
 

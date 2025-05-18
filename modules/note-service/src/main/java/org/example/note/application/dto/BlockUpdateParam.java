@@ -10,9 +10,8 @@ import org.example.note.domain.property.BlockProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public record BlockCreateParam(
+public record BlockUpdateParam(
         String title,
-        String fieldKey,
         BlockType type,
         Map<String, Object> properties
         ) {
@@ -24,8 +23,8 @@ public record BlockCreateParam(
         node.put("type", type.name());
 
         try {
-            return objectMapper.treeToValue(node, propertyClass);
-        } catch (Exception e) {
+            return objectMapper.convertValue(node, propertyClass);
+        } catch (IllegalArgumentException e) {
             throw new BlockExeption(ErrorCode.INVALID_PROPERTIES, type);
         }
     }

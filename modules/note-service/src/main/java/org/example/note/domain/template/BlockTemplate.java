@@ -5,7 +5,6 @@ import org.example.note.domain.property.BlockProperties;
 
 public record BlockTemplate(
         String title,
-        boolean isDefault,
         String fieldKey,
         BlockType type,
         BlockProperties properties,

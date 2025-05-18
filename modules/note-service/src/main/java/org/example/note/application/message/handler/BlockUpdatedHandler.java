@@ -35,7 +35,7 @@ public class BlockUpdatedHandler implements WebSocketMessageHandler {
         BlockDto updatedBlock = blockService.update(
                 message.getUserId(),
                 payload.blockId(),
-                payload.updateFields()
+                payload.toParam()
         );
 
         // 갱신된 블록 정보를 포함한 새 메시지 생성

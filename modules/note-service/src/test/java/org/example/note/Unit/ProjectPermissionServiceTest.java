@@ -1,4 +1,4 @@
-package org.example.note;
+package org.example.note.Unit;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package org.example.note;
+package org.example.note.Unit;
 
 import java.util.UUID;
 
@@ -18,7 +18,6 @@ import org.example.note.domain.property.TextBlockProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +48,7 @@ class BlockPermissionServiceTest {
 
         Project project = Project.create(ownerId, "Test Project", "Test Description");
         Note note = Note.create(project, "Test Note", NoteType.DETAILS, 100);
-        block = Block.create(note, "Test Block", true, "test", BlockType.TEXT, new TextBlockProperties("test content"),
+        block = Block.create(note, "Test Block", "test", BlockType.TEXT, new TextBlockProperties("test content"),
                 100);
 
         entityManager.persist(project);

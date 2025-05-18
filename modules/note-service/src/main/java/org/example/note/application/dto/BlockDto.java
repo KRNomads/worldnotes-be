@@ -8,10 +8,8 @@ import org.example.note.domain.property.BlockProperties;
 
 public record BlockDto(
         Long blockId,
-        UUID projectId,
         UUID noteId,
         String title,
-        boolean isDefault,
         String fieldKey,
         BlockType type,
         BlockProperties properties,
@@ -20,10 +18,8 @@ public record BlockDto(
     public static BlockDto from(Block block) {
         return new BlockDto(
                 block.getId(),
-                block.getNote().getProject().getId(),
                 block.getNote().getId(),
                 block.getTitle(),
-                block.isDefault(),
                 block.getFieldKey(),
                 block.getType(),
                 block.getProperties(),

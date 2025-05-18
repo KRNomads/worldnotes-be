@@ -24,6 +24,7 @@ public enum ErrorCode {
     // Block
     BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 블럭 (blockId: %s)"),
     BLOCK_FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없는 유저의 블럭 접근 (blockId: %s)"),
+    INVALID_PROPERTIES(HttpStatus.BAD_REQUEST, "잘못된 블럭 타입 (blockType: %s)"),
     // default
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "Invalid request."), // 잘못된 요청
     UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "Unauthorized."), // 인증되지 않은 사용자의 요청

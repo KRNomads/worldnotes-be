@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 
 import org.example.note.domain.enums.BlockType;
 import org.example.note.domain.property.BlockProperties;
-import org.example.note.domain.property.BlockPropertiesConverter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,15 +36,13 @@ public class Block {
 
     private String title;
 
-    private boolean isDefault;
-
     private String fieldKey;
 
     @Enumerated(EnumType.STRING)
     private BlockType type;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = BlockPropertiesConverter.class)
     private BlockProperties properties;
 
     private Integer position;
@@ -56,13 +54,12 @@ public class Block {
     private LocalDateTime updatedAt;
 
     // ==== 비즈니스 로직 ==== ( 유효성 검사 ?)
-    public static Block create(Note note, String title, boolean isDefault, String fieldKey, BlockType type, BlockProperties properties,
+    public static Block create(Note note, String title, String fieldKey, BlockType type, BlockProperties properties,
             Integer position) {
 
         Block block = new Block();
         block.note = note;
         block.title = title;
-        block.isDefault = isDefault;
         block.fieldKey = fieldKey;
         block.type = type;
         block.properties = properties;
@@ -70,18 +67,19 @@ public class Block {
         return block;
     }
 
+    // 기본 블록 여부
+    public boolean isDefault() {
+        return fieldKey != null && !fieldKey.isBlank();
+    }
+
     public void updateTitle(String title) {
 
         this.title = title;
     }
 
-    public void updateType(BlockType type) {
+    public void updateTypeAndProperty(BlockType type, BlockProperties properties) {
 
         this.type = type;
-    }
-
-    public void updateProperty(BlockProperties properties) {
-
         this.properties = properties;
     }
 

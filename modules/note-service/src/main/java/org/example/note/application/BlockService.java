@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.example.note.adapter.out.repository.BlockJpaRepository;
 import org.example.note.application.dto.BlockCreateParam;
 import org.example.note.application.dto.BlockDto;
+import org.example.note.application.dto.BlockUpdateParam;
 import org.example.note.domain.entity.Block;
 import org.example.note.domain.entity.Note;
 import org.example.note.domain.enums.BlockType;
@@ -17,12 +18,15 @@ import org.example.note.domain.template.NoteBlockTemplates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class BlockService {
 
+    private final ObjectMapper objectMapper;
     private final BlockJpaRepository blockJpaRepository;
     private final BlockPermissionService blockPermissionService;
     private final NotePermissionService notePermissionService;
@@ -50,10 +54,9 @@ public class BlockService {
         Block block = Block.create(
                 note,
                 title,
-                param.isDefault(),
                 param.fieldKey(),
                 param.type(),
-                param.properties(),
+                param.parseProperties(objectMapper),
                 newPosition);
 
         Block saved = blockJpaRepository.save(block);
@@ -74,10 +77,9 @@ public class BlockService {
                     return Block.create(
                             note,
                             title,
-                            param.isDefault(),
                             param.fieldKey(),
                             param.type(),
-                            param.properties(),
+                            param.parseProperties(objectMapper),
                             position[0]
                     );
                 })
@@ -99,7 +101,6 @@ public class BlockService {
                         -> Block.create(
                         note,
                         template.title(),
-                        template.isDefault(),
                         template.fieldKey(),
                         template.type(),
                         template.properties(),
@@ -112,25 +113,19 @@ public class BlockService {
 
     // === 업데이트 ===
     @Transactional
-    public BlockDto update(UUID userId, Long id, Map<String, Object> updateFields) {
-        Block block = blockPermissionService.getBlockIfOwner(userId, id);
+    public BlockDto update(UUID userId, Long blockId, BlockUpdateParam param) {
+        Block block = blockPermissionService.getBlockIfOwner(userId, blockId);
 
-        if (updateFields.containsKey("title")) {
-            block.updateTitle((String) updateFields.get("title"));
+        if (param.title() != null) {
+            block.updateTitle(param.title());
         }
 
-        if (updateFields.containsKey("type")) {
-            block.updateType(BlockType.valueOf((String) updateFields.get("type")));
-        }
+        BlockType type = param.type();
+        BlockProperties props = param.parseProperties(objectMapper);
 
-        if (updateFields.containsKey("properties")) {
-            // 잘작동하는지 모름?
-            BlockProperties properties = (BlockProperties) updateFields.get("properties");
-            block.updateProperty(properties);
-        }
+        block.updateTypeAndProperty(type, props);
 
-        blockJpaRepository.save(block);
-        return BlockDto.from(block);
+        return BlockDto.from(blockJpaRepository.save(block));
     }
 
     @Transactional
@@ -143,7 +138,7 @@ public class BlockService {
                     String fieldKey = block.getFieldKey();
                     if (fieldValues.containsKey(fieldKey)) {
                         String value = fieldValues.get(fieldKey);
-                        block.updateProperty(new TextBlockProperties(value));
+                        block.updateTypeAndProperty(BlockType.TEXT, new TextBlockProperties(value));
                     }
                 });
 

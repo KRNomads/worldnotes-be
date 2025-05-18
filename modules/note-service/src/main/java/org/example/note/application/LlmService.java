@@ -113,7 +113,7 @@ public class LlmService {
         // 추가 필드 생성
         List<BlockCreateParam> params = new ArrayList<>();
         extraFields.forEach((key, value) -> {
-            params.add(new BlockCreateParam(key, false, null, BlockType.TEXT, new TextBlockProperties(value)));
+            params.add(new BlockCreateParam(key, null, BlockType.TEXT, Map.of("value", value)));
         });
         List<BlockDto> newBlockDtoList = blockService.createMultiple(userId, noteDto.noteId(), params); // 권한 체크크
 
@@ -143,7 +143,7 @@ public class LlmService {
         // 추가 필드 생성
         List<BlockCreateParam> params = new ArrayList<>();
         extraFields.forEach((key, value) -> {
-            params.add(new BlockCreateParam(key, false, null, BlockType.TEXT, new TextBlockProperties(value)));
+            params.add(new BlockCreateParam(key, null, BlockType.TEXT, Map.of("value", value)));
         });
         List<BlockDto> newBlockDtoList = blockService.createMultiple(userId, noteDto.noteId(), params); // 권한 체크크
 
