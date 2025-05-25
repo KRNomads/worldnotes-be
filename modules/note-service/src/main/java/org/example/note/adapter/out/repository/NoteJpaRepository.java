@@ -19,8 +19,8 @@ public interface NoteJpaRepository extends JpaRepository<Note, UUID> {
 
     List<Note> findByProjectIdAndType(UUID projectId, NoteType type);
 
-    @Query("SELECT MAX(n.position) FROM Note n WHERE n.project.id = :projectId")
-    Optional<Integer> findMaxPositionByProjectId(@Param("projectId") UUID projectId);
+    @Query("SELECT MAX(n.position) FROM Note n WHERE n.project.id = :projectId AND n.type = :type")
+    Optional<Integer> findMaxPositionByProjectIdAndType(@Param("projectId") UUID projectId, @Param("type") NoteType type);
 
     @Query("""
         SELECT n
@@ -32,6 +32,7 @@ public interface NoteJpaRepository extends JpaRepository<Note, UUID> {
           AND pm.role IN :allowedRoles
     """)
     Optional<Note> findNoteWithPermission(@Param("userId") UUID userId,
-            @Param("noteId") UUID noteId, @Param("allowedRoles") List<MemberRole> allowedRoles);
+            @Param("noteId") UUID noteId,
+            @Param("allowedRoles") List<MemberRole> allowedRoles);
 
 }

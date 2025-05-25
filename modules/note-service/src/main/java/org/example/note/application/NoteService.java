@@ -61,14 +61,11 @@ public class NoteService {
     // === 생성 ===
     @Transactional
     public NoteDto create(UUID userId, UUID projectId, String title, NoteType type) {
-        projectPermissionService.checkIsOwner(userId, projectId);
+        Project project = projectPermissionService.getProjectIfOwner(userId, projectId);
 
         if (type == NoteType.BASIC_INFO) {
             throw new IllegalArgumentException("BASIC_INFO 타입의 노트는 생성할 수 없습니다.");
         }
-
-        Project project = projectJpaRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectException(ErrorCode.PROJECT_NOT_FOUND, projectId));
 
         String finalTitle = (title == null || title.trim().isEmpty())
                 ? switch (type) {
@@ -82,7 +79,7 @@ public class NoteService {
                 : title.trim();
 
         // 위치 설정
-        Integer maxPosition = noteJpaRepository.findMaxPositionByProjectId(projectId).orElse(0);
+        Integer maxPosition = noteJpaRepository.findMaxPositionByProjectIdAndType(projectId, type).orElse(0);
         Integer newPosition = maxPosition + 100;
 
         Note note = Note.create(
