@@ -16,7 +16,6 @@ import org.example.note.application.dto.NoteDto;
 import org.example.note.application.dto.ProjectDto;
 import org.example.note.domain.enums.BlockType;
 import org.example.note.domain.enums.NoteType;
-import org.example.note.domain.property.TextBlockProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

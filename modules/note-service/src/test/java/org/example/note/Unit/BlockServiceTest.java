@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest(classes = NoteServiceApplication.class)
-//@Transactional
+@Transactional
 public class BlockServiceTest {
 
     private static final UUID TEST_USER_ID = UUID.fromString("7fe1ac4a-ef1b-4c03-ac17-c7283b9d9ba5");

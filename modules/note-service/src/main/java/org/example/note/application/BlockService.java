@@ -120,10 +120,11 @@ public class BlockService {
             block.updateTitle(param.title());
         }
 
-        BlockType type = param.type();
-        BlockProperties props = param.parseProperties(objectMapper);
-
-        block.updateTypeAndProperty(type, props);
+        if (param.type() != null && param.properties() != null) {
+            BlockType type = param.type();
+            BlockProperties props = param.parseProperties(objectMapper);
+            block.updateTypeAndProperty(type, props);
+        }
 
         return BlockDto.from(blockJpaRepository.save(block));
     }
