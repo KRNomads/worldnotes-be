@@ -23,8 +23,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // WebSocket 연결 엔드포인트 설정
-        registry.addEndpoint("/ws/projects")
-                .setAllowedOrigins("*") // 프로덕션에서는 구체적인 출처를 지정하는 것이 좋습니다
+        registry.addEndpoint("/ws/worldnote")
+                .setAllowedOriginPatterns("*") // 프로덕션에서는 구체적인 출처를 지정하는 것이 좋습니다
                 .withSockJS(); // SockJS 지원 추가
     }
 

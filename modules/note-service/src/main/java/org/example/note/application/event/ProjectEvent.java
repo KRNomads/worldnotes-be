@@ -9,7 +9,11 @@ import org.example.note.application.message.payload.ProjectPayload;
 import lombok.Getter;
 
 @Getter
-public class ProjectEvent implements NoteObjectEvent<ProjectDto, ProjectPayload> {
+public class ProjectEvent {
+
+    public enum EventType {
+        CREATED, UPDATED, DELETED
+    }
 
     private final EventType eventType;
     private final UUID userId;
@@ -33,7 +37,6 @@ public class ProjectEvent implements NoteObjectEvent<ProjectDto, ProjectPayload>
         return new ProjectEvent(EventType.DELETED, userId, projectDto);
     }
 
-    @Override
     public WebSocketMessage<ProjectPayload> toWebSocketMessage() {
         WebSocketMessage.MessageType messageType
                 = switch (eventType) {

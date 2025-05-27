@@ -15,9 +15,10 @@ import org.example.note.application.dto.llm.BlockSummary;
 import org.example.note.application.dto.llm.NoteContentDto;
 import org.example.note.application.dto.llm.NoteSummary;
 import org.example.note.application.dto.llm.ProjectMetaDto;
+import org.example.note.application.event.NoteEvent;
 import org.example.note.domain.enums.BlockType;
 import org.example.note.domain.enums.NoteType;
-import org.example.note.domain.property.TextBlockProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class LlmService {
 
+    private final ApplicationEventPublisher publisher;
     private final ProjectService projectService;
     private final NoteService noteService;
     private final BlockService blockService;
@@ -127,6 +129,9 @@ public class LlmService {
                 .map(BlockSummary::from)
                 .collect(Collectors.toList());
 
+        // 웹소켓 이벤트 발행
+        publisher.publishEvent(NoteEvent.created(userId, noteDto));
+
         return new NoteContentDto(
                 noteDto.noteId(),
                 noteDto.title(),
@@ -151,6 +156,9 @@ public class LlmService {
         List<BlockSummary> blocks = newBlockDtoList.stream()
                 .map(BlockSummary::from)
                 .collect(Collectors.toList());
+
+        // 웹소켓 이벤트 발행
+        publisher.publishEvent(NoteEvent.created(userId, noteDto));
 
         return new NoteContentDto(
                 noteDto.noteId(),

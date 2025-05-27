@@ -19,7 +19,9 @@ public class NoteBlockTemplates {
             case CHARACTER ->
                 List.of(
                 new BlockTemplate("나이", "age", BlockType.TEXT, new TextBlockProperties(""), 0),
-                new BlockTemplate("종족", "tribe", BlockType.TEXT, new TextBlockProperties(""), 0)
+                new BlockTemplate("종족", "tribe", BlockType.TEXT, new TextBlockProperties(""), 0),
+                new BlockTemplate("성격", "personality", BlockType.TEXT, new TextBlockProperties(""), 0),
+                new BlockTemplate("성별", "gender", BlockType.TEXT, new TextBlockProperties(""), 0)
                 );
             case DETAILS ->
                 List.of( // new BlockTemplate("세계관 설정", null, BlockType.TEXT, new TextBlockProperties(""), 0)

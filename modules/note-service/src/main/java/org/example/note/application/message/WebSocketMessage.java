@@ -21,9 +21,9 @@ public class WebSocketMessage<T> {
         BLOCK_UPDATED,
         BLOCK_DELETED,
         // 협업 상태
-        CURSOR_MOVED,
-        USER_JOINED,
-        USER_LEFT
+        // CURSOR_MOVED,
+        // USER_JOINED,
+        // USER_LEFT
     }
 
     private MessageType type;
