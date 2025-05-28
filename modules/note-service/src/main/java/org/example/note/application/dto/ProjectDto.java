@@ -7,7 +7,7 @@ import org.example.note.domain.entity.Project;
 public record ProjectDto(
         UUID projectId,
         String title,
-        String description) implements NoteObjectDto {
+        String description) {
 
     public static ProjectDto from(Project project) {
         return new ProjectDto(

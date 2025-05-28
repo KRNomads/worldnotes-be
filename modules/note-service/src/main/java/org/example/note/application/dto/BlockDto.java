@@ -13,7 +13,7 @@ public record BlockDto(
         String fieldKey,
         BlockType type,
         BlockProperties properties,
-        Integer position) implements NoteObjectDto {
+        Integer position) {
 
     public static BlockDto from(Block block) {
         return new BlockDto(

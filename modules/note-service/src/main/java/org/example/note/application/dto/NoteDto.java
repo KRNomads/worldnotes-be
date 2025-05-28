@@ -10,7 +10,7 @@ public record NoteDto(
         UUID projectId,
         String title,
         NoteType type,
-        Integer position) implements NoteObjectDto {
+        Integer position) {
 
     public static NoteDto from(Note note) {
         return new NoteDto(
