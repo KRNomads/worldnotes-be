@@ -50,7 +50,7 @@ public class TagController {
             @PathVariable UUID projectId,
             @RequestBody TagCreateRequest request) {
         UUID userId = UUID.fromString(userDetails.getUsername());
-        TagDto tagDto = tagService.createTag(userId, projectId, request.tagName(), request.color());
+        TagDto tagDto = tagService.createTag(userId, projectId, request.name(), request.color());
         return ResponseEntity.ok(tagDto);
     }
 
@@ -61,7 +61,7 @@ public class TagController {
             @PathVariable UUID tagId,
             @RequestBody TagUpdateRequest request) {
         UUID userId = UUID.fromString(userDetails.getUsername());
-        TagDto tagDto = tagService.updateTag(projectId, tagId, request.tagName(), request.color());
+        TagDto tagDto = tagService.updateTag(projectId, tagId, request.name(), request.color());
         return ResponseEntity.ok(tagDto);
     }
 
