@@ -12,7 +12,7 @@ public record NoteDto(
         NoteType type,
         Integer position) {
 
-    public static NoteDto from(Note note) {
+    public static NoteDto fromEntity(Note note) {
         return new NoteDto(
                 note.getId(),
                 note.getProject().getId(),

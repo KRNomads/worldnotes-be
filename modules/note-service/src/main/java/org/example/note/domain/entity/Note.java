@@ -42,8 +42,13 @@ public class Note {
 
     private Integer position;
 
+    // 블록들
     @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Block> blocks = new ArrayList<>();
+
+    // 태그들
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NoteTag> noteTags = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;
