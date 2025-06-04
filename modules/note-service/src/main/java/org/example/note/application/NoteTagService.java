@@ -30,14 +30,14 @@ public class NoteTagService {
 
     // === 조회 ===
     /**
-     * 노트의 태그 목록 조회
+     * 노트의 태그 id 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<TagDto> findTagsByNote(UUID userId, UUID noteId) {
+    public List<UUID> findTagIdsByNote(UUID userId, UUID noteId) {
         Note note = notePermissionService.getNoteIfOwner(userId, noteId);
 
         return note.getNoteTags().stream()
-                .map(noteTag -> TagDto.fromEntity(noteTag.getTag()))
+                .map(noteTag -> noteTag.getTag().getId())
                 .collect(Collectors.toList());
     }
 

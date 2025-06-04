@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.example.note.application.NoteTagService;
 import org.example.note.application.dto.NoteDto;
-import org.example.note.application.dto.TagDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,10 +38,10 @@ public class NoteTagController {
 
     @GetMapping("/notes/{noteId}/tags")
     @Operation(summary = "노트에 연결된 태그 목록 조회")
-    public ResponseEntity<List<TagDto>> getTagsByNote(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<List<UUID>> getTagsByNote(@AuthenticationPrincipal UserDetails userDetails,
             @PathVariable UUID noteId) {
         UUID userId = UUID.fromString(userDetails.getUsername());
-        List<TagDto> tags = noteTagService.findTagsByNote(userId, noteId);
+        List<UUID> tags = noteTagService.findTagIdsByNote(userId, noteId);
         return ResponseEntity.ok(tags);
     }
 

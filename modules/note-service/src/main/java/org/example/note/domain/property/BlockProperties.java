@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = TextBlockProperties.class, name = "TEXT"),
     @JsonSubTypes.Type(value = ImageBlockProperties.class, name = "IMAGE"),
-    @JsonSubTypes.Type(value = TagBlockProperties.class, name = "TAGS"), // 필요시 추가
-})
+    @JsonSubTypes.Type(value = TagBlockProperties.class, name = "TAGS"),
+    @JsonSubTypes.Type(value = ParagraphBlockProperties.class, name = "PARAGRAPH"),})
 public interface BlockProperties {
 
 }
