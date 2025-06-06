@@ -8,10 +8,11 @@ import org.example.note.domain.enums.BlockType;
 public record BlockUpdateRequest(
         String title,
         BlockType type,
-        Map<String, Object> properties
+        Map<String, Object> properties,
+        Boolean isCollapsed
         ) {
 
     public BlockUpdateParam toParam() {
-        return new BlockUpdateParam(title, type, properties);
+        return new BlockUpdateParam(title, type, properties, isCollapsed);
     }
 }

@@ -1,6 +1,6 @@
 package org.example.note.domain.property;
 
-import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class ParagraphBlockProperties implements BlockProperties {
 
     private final String type = "PARAGRAPH";
-    private List<RichTextElement> richText;
+    private Map<String, Object> content;
 
 }

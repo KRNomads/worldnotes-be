@@ -21,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BlockService {
@@ -124,6 +126,10 @@ public class BlockService {
             BlockType type = param.type();
             BlockProperties props = param.parseProperties(objectMapper);
             block.updateTypeAndProperty(type, props);
+        }
+
+        if (param.isCollapsed() != null) {
+            block.updateIsCollapsed(param.isCollapsed());
         }
 
         return BlockDto.from(blockJpaRepository.save(block));

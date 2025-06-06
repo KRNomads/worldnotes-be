@@ -9,10 +9,11 @@ public record BlockUpdatePayload(
         Long blockId,
         String title,
         BlockType type,
-        Map<String, Object> properties // e.g. { "TEXT": { "content": "..." } }
+        Map<String, Object> properties, // e.g. { "TEXT": { "content": "..." } }
+        Boolean isCollapsed
         ) implements MessagePayload {
 
     public BlockUpdateParam toParam() {
-        return new BlockUpdateParam(title, type, properties);
+        return new BlockUpdateParam(title, type, properties, isCollapsed);
     }
 }

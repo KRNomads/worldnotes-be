@@ -13,7 +13,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public record BlockUpdateParam(
         String title,
         BlockType type,
-        Map<String, Object> properties
+        Map<String, Object> properties,
+        Boolean isCollapsed
         ) {
 
     public BlockProperties parseProperties(ObjectMapper objectMapper) {

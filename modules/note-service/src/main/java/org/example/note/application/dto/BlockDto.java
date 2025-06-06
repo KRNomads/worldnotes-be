@@ -13,7 +13,8 @@ public record BlockDto(
         String fieldKey,
         BlockType type,
         BlockProperties properties,
-        Integer position) {
+        Integer position,
+        Boolean isCollapsed) {
 
     public static BlockDto from(Block block) {
         return new BlockDto(
@@ -23,7 +24,8 @@ public record BlockDto(
                 block.getFieldKey(),
                 block.getType(),
                 block.getProperties(),
-                block.getPosition()
+                block.getPosition(),
+                block.getIsCollapsed()
         );
     }
 }

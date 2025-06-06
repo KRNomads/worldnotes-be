@@ -45,6 +45,9 @@ public class Block {
     @Column(columnDefinition = "jsonb")
     private BlockProperties properties;
 
+    @Column(nullable = false)
+    private Boolean isCollapsed = false;
+
     private Integer position;
 
     @CreationTimestamp
@@ -64,6 +67,7 @@ public class Block {
         block.type = type;
         block.properties = properties;
         block.position = position;
+        block.isCollapsed = false;
         return block;
     }
 
@@ -81,6 +85,11 @@ public class Block {
 
         this.type = type;
         this.properties = properties;
+    }
+
+    public void updateIsCollapsed(Boolean isCollapsed) {
+
+        this.isCollapsed = isCollapsed;
     }
 
     public void updatePosition(Integer position) {
