@@ -49,24 +49,10 @@ public class NoteService {
         return notes.stream().map(NoteDto::fromEntity).toList();
     }
 
-    @Transactional(readOnly = true)
-    public NoteDto findBasicInfoByProjectId(UUID projectId) {
-        // 권한체크 필요 x
-        Note note = noteRepository.findByProjectIdAndType(projectId, NoteType.BASIC_INFO)
-                .stream().findFirst()
-                .orElseThrow(() -> new NoteException(ErrorCode.NOTE_NOT_FOUND, projectId));
-
-        return NoteDto.fromEntity(note);
-    }
-
     // === 생성 ===
     @Transactional
     public NoteDto create(UUID userId, UUID projectId, String title, NoteType type) {
         Project project = projectPermissionService.getProjectIfOwner(userId, projectId);
-
-        if (type == NoteType.BASIC_INFO) {
-            throw new IllegalArgumentException("BASIC_INFO 타입의 노트는 생성할 수 없습니다.");
-        }
 
         String finalTitle = (title == null || title.trim().isEmpty())
                 ? switch (type) {
@@ -95,19 +81,6 @@ public class NoteService {
         blockService.createDefaultBlocksFor(note);
 
         return NoteDto.fromEntity(note);
-    }
-
-    public void createDefaultNoteFor(Project project) {
-        // 권한체크 필요 x
-        Note basicInfoNote = Note.create(
-                project,
-                "기본 정보",
-                NoteType.BASIC_INFO,
-                0);
-
-        noteRepository.save(basicInfoNote);
-
-        blockService.createDefaultBlocksFor(basicInfoNote);
     }
 
     // === 업데이트 ===

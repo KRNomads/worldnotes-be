@@ -48,9 +48,6 @@ public class ProjectService {
 
         projectJpaRepository.save(project);
 
-        // 디폴트 basic info 생성
-        noteService.createDefaultNoteFor(project);
-
         return ProjectDto.from(project);
     }
 

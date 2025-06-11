@@ -84,21 +84,6 @@ public class LlmService {
                 blocks);
     }
 
-    // 프로젝트 기본 설정 수정
-    public void updateBasicInfo(UUID userId, UUID projectId, String title, String genre, String keycontent) {
-
-        // 노트 로드
-        NoteDto noteDto = noteService.findBasicInfoByProjectId(projectId);
-
-        // 기본 필드 수정
-        Map<String, String> defaultFieldValues = new HashMap<>();
-        defaultFieldValues.put("title", title);
-        defaultFieldValues.put("genre", genre);
-        defaultFieldValues.put("keycontent", keycontent);
-        List<BlockDto> updatedBlockDtoList = blockService.updateDefaultBlocks(noteDto.noteId(), defaultFieldValues);
-
-    }
-
     // 캐릭터 설정 생성
     public NoteContentDto makeCharacter(UUID userId, UUID projectId, String noteTitle, String age, String tribe,
             Map<String, String> extraFields) {
