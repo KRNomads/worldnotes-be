@@ -26,6 +26,9 @@ public class NoteBlockTemplates {
             case EVENT ->
                 List.of( // new BlockTemplate("세계관 설정", null, BlockType.TEXT, new TextBlockProperties(""), 0)
                 );
+            case ITEM ->
+                List.of( // new BlockTemplate("세계관 설정", null, BlockType.TEXT, new TextBlockProperties(""), 0)
+                );
             default ->
                 throw new IllegalArgumentException("Invalid noteType: " + noteType);
         };

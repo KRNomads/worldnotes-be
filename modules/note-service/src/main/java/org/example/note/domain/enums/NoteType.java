@@ -4,5 +4,6 @@ public enum NoteType {
     CHARACTER,
     DETAILS,
     PLACE,
-    EVENT
+    EVENT,
+    ITEM
 }

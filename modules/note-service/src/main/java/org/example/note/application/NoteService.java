@@ -3,13 +3,11 @@ package org.example.note.application;
 import java.util.List;
 import java.util.UUID;
 
-import org.example.common.exception.ErrorCode;
 import org.example.note.adapter.out.repository.NoteJpaRepository;
 import org.example.note.application.dto.NoteDto;
 import org.example.note.domain.entity.Note;
 import org.example.note.domain.entity.Project;
 import org.example.note.domain.enums.NoteType;
-import org.example.note.domain.exception.NoteException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +56,12 @@ public class NoteService {
                 ? switch (type) {
             case CHARACTER ->
                 "새 등장인물";
+            case ITEM ->
+                "새 아이템";
+            case PLACE ->
+                "새 장소";
+            case EVENT ->
+                "새 사건";
             case DETAILS ->
                 "새 설정";
             default ->
