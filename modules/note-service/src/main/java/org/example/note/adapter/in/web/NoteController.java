@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -71,12 +72,12 @@ public class NoteController {
         return ResponseEntity.ok(noteDto);
     }
 
-    @PutMapping("/{noteId}")
+    @PatchMapping("/{noteId}")
     @Operation(summary = "노트 업데이트")
     public ResponseEntity<NoteDto> updateNote(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID noteId,
             @RequestBody NoteUpdateRequest request) {
         UUID userId = UUID.fromString(userDetails.getUsername());
-        NoteDto noteDto = noteService.update(userId, noteId, request.title());
+        NoteDto noteDto = noteService.update(userId, noteId, request.toParam());
         return ResponseEntity.ok(noteDto);
     }
 

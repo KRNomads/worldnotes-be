@@ -57,7 +57,7 @@ public class LlmService {
                 ));
 
         return new ProjectMetaDto(
-                projectDto.projectId(),
+                projectDto.id(),
                 projectDto.title(),
                 meta
         );
@@ -78,7 +78,7 @@ public class LlmService {
                 .toList();
 
         return new NoteContentDto(
-                noteDto.noteId(),
+                noteDto.id(),
                 noteDto.title(),
                 noteDto.type(),
                 blocks);
@@ -95,14 +95,14 @@ public class LlmService {
         Map<String, String> defaultFieldValues = new HashMap<>();
         defaultFieldValues.put("age", age);
         defaultFieldValues.put("tribe", tribe);
-        List<BlockDto> updatedBlockDtoList = blockService.updateDefaultBlocks(noteDto.noteId(), defaultFieldValues);
+        List<BlockDto> updatedBlockDtoList = blockService.updateDefaultBlocks(noteDto.id(), defaultFieldValues);
 
         // 추가 필드 생성
         List<BlockCreateParam> params = new ArrayList<>();
         extraFields.forEach((key, value) -> {
             params.add(new BlockCreateParam(key, null, BlockType.TEXT, Map.of("value", value)));
         });
-        List<BlockDto> newBlockDtoList = blockService.createMultiple(userId, noteDto.noteId(), params); // 권한 체크크
+        List<BlockDto> newBlockDtoList = blockService.createMultiple(userId, noteDto.id(), params); // 권한 체크크
 
         // 두 개의 블록 리스트 합치기
         List<BlockDto> combinedBlockDtoList = new ArrayList<>();
@@ -118,7 +118,7 @@ public class LlmService {
         publisher.publishEvent(NoteEvent.created(userId, noteDto));
 
         return new NoteContentDto(
-                noteDto.noteId(),
+                noteDto.id(),
                 noteDto.title(),
                 noteDto.type(),
                 blocks);
@@ -135,7 +135,7 @@ public class LlmService {
         extraFields.forEach((key, value) -> {
             params.add(new BlockCreateParam(key, null, BlockType.TEXT, Map.of("value", value)));
         });
-        List<BlockDto> newBlockDtoList = blockService.createMultiple(userId, noteDto.noteId(), params); // 권한 체크크
+        List<BlockDto> newBlockDtoList = blockService.createMultiple(userId, noteDto.id(), params); // 권한 체크크
 
         // BlockDto 리스트를 BlockSummary 리스트로 변환
         List<BlockSummary> blocks = newBlockDtoList.stream()
@@ -146,7 +146,7 @@ public class LlmService {
         publisher.publishEvent(NoteEvent.created(userId, noteDto));
 
         return new NoteContentDto(
-                noteDto.noteId(),
+                noteDto.id(),
                 noteDto.title(),
                 noteDto.type(),
                 blocks);

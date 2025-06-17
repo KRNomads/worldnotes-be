@@ -13,6 +13,6 @@ public record ProjectPayload(
 
     // 필요한 팩토리 메서드
     public static ProjectPayload fromDto(ProjectDto dto) {
-        return new ProjectPayload(dto.projectId(), dto.title(), dto.description());
+        return new ProjectPayload(dto.id(), dto.title(), dto.overview());
     }
 }

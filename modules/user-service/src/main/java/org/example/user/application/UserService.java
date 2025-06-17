@@ -23,13 +23,13 @@ public class UserService {
     // ==== 조회 ====
     @Transactional(readOnly = true)
     public UserDto getUserById(UUID userId) {
-        return user2DTO(getUserOrThrow(userId));
+        return UserDto.from(getUserOrThrow(userId));
     }
 
     @Transactional(readOnly = true)
     public UserDto getUserByProvider(SocialProvider provider, String providerId) {
         return userRepository.findByProviderAndProviderId(provider, providerId)
-                .map(this::user2DTO)
+                .map(UserDto::from)
                 .orElse(null);
     }
 
@@ -38,7 +38,7 @@ public class UserService {
     public UserDto createUser(OAuth2UserInfo oAuth2UserInfo) {
         User user = oAuth2UserInfo.toEntity();
         userRepository.save(user);
-        return user2DTO(user);
+        return UserDto.from(user);
     }
 
     // ==== 수정 ====
@@ -46,7 +46,14 @@ public class UserService {
     public UserDto updateUserNameAndEmail(UUID userId, String name, String email) {
         User user = getUserOrThrow(userId);
         user.updateNameAndEmail(name, email);
-        return user2DTO(user);
+        return UserDto.from(user);
+    }
+
+    @Transactional
+    public UserDto updateUserProfileImg(UUID userId, String profileImg) {
+        User user = getUserOrThrow(userId);
+        user.updateProfileImg(profileImg);
+        return UserDto.from(user);
     }
 
     // ==== 삭제 ====
@@ -67,25 +74,13 @@ public class UserService {
     public UserDto recoveryUser(UUID userId) {
         User user = getUserOrThrow(userId);
         user.recoveryUser();
-        return user2DTO(user);
+        return UserDto.from(user);
     }
 
     // ==== 공통 유틸 ====
     private User getUserOrThrow(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND, userId));
-    }
-
-    private UserDto user2DTO(User user) {
-        return new UserDto(
-                user.getId(),
-                user.getRole(),
-                user.getProvider(),
-                user.getProviderId(),
-                user.getEmail(),
-                user.getName(),
-                user.getIsDeleted()
-        );
     }
 
 }

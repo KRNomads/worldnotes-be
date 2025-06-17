@@ -11,6 +11,6 @@ public record NoteSummary(
         ) {
 
     public static NoteSummary from(NoteDto dto) {
-        return new NoteSummary(dto.noteId(), dto.title(), dto.position());
+        return new NoteSummary(dto.id(), dto.title(), dto.position());
     }
 }

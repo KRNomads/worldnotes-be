@@ -18,6 +18,6 @@ public record BlockPayload(
 
     // 필요한 팩토리 메서드
     public static BlockPayload fromDto(BlockDto dto) {
-        return new BlockPayload(dto.blockId(), dto.noteId(), dto.title(), dto.type(), dto.properties(), dto.position());
+        return new BlockPayload(dto.id(), dto.noteId(), dto.title(), dto.type(), dto.properties(), dto.position());
     }
 }

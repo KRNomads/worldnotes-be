@@ -36,7 +36,7 @@ public class AuthController {
     public ResponseEntity<UserInfoResponse> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
         UUID userId = UUID.fromString(userDetails.getUsername());
         UserDto userDto = userOAuthReader.loadUser(userId);
-        UserInfoResponse response = new UserInfoResponse(userDto.userId(), userDto.name(), userDto.role());
+        UserInfoResponse response = new UserInfoResponse(userDto.userId(), userDto.email(), userDto.name(), userDto.role(), userDto.profileImg());
         return ResponseEntity.ok(response);
     }
 

@@ -31,7 +31,11 @@ public class Project {
 
     private String title;
 
-    private String description;
+    private String overview;
+
+    private String synopsis;
+
+    private String genre;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();
@@ -43,20 +47,34 @@ public class Project {
     private LocalDateTime updatedAt;
 
     // ==== 비즈니스 로직 ====
-    public static Project create(UUID userId, String name, String description) {
+    public static Project create(UUID userId, String name, String overview) {
         validate(name);
 
         Project project = new Project();
         project.title = name;
-        project.description = description;
+        project.overview = overview;
         project.addMember(userId, MemberRole.OWNER);
         return project;
     }
 
-    public void update(String name, String description) {
-        validate(name);
-        this.title = name;
-        this.description = description;
+    public void updateTitle(String title) {
+
+        this.title = title;
+    }
+
+    public void updateOverview(String overview) {
+
+        this.overview = overview;
+    }
+
+    public void updateSynopsis(String synopsis) {
+
+        this.synopsis = synopsis;
+    }
+
+    public void updateGenre(String genre) {
+
+        this.genre = genre;
     }
 
     private static void validate(String name) {

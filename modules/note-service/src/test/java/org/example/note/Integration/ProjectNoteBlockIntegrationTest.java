@@ -63,12 +63,12 @@ class ProjectNoteBlockIntegrationTest {
         ProjectDto project = projectService.create(TEST_USER_ID, projectTitle, projectDescription);
 
         // 1. 기본 정보 노트 수정
-        NoteDto basicInfoNote = noteService.findByProjectIdAndType(TEST_USER_ID, project.projectId(), NoteType.BASIC_INFO).get(0);
-        List<BlockDto> basicBlocks = blockService.findByNoteId(TEST_USER_ID, basicInfoNote.noteId());
+        NoteDto basicInfoNote = noteService.findByProjectIdAndType(TEST_USER_ID, project.id(), NoteType.BASIC_INFO).get(0);
+        List<BlockDto> basicBlocks = blockService.findByNoteId(TEST_USER_ID, basicInfoNote.id());
 
-        blockService.update(TEST_USER_ID, basicBlocks.get(0).blockId(), textUpdate("에테르의 심장"));
-        blockService.update(TEST_USER_ID, basicBlocks.get(1).blockId(), textUpdate("판타지, 서사극, 디스토피아, 정치/철학 드라마, 로맨스, 전쟁물"));
-        blockService.update(TEST_USER_ID, basicBlocks.get(2).blockId(), textUpdate("""
+        blockService.update(TEST_USER_ID, basicBlocks.get(0).id(), textUpdate("에테르의 심장"));
+        blockService.update(TEST_USER_ID, basicBlocks.get(1).id(), textUpdate("판타지, 서사극, 디스토피아, 정치/철학 드라마, 로맨스, 전쟁물"));
+        blockService.update(TEST_USER_ID, basicBlocks.get(2).id(), textUpdate("""
         에테르의 균형이 무너지고, 카이로스의 마법과 이노바의 과학이 충돌한다.
         리안은 예언에 따라 지상을 향해 내려오고, 엘리시아는 파멸을 막기 위해 적국의 마법사들과 손을 잡는다.
         테이른은 중립의 땅에서 마지막 생명의 균형을 지키기 위해 싸우고,
@@ -77,20 +77,20 @@ class ProjectNoteBlockIntegrationTest {
     """));
 
         // 2. 캐릭터 1 생성 + 수정
-        NoteDto note1 = noteService.create(TEST_USER_ID, project.projectId(), noteTitle1, noteType1);
-        blockService.createMultiple(TEST_USER_ID, note1.noteId(), blockParams1);
-        List<BlockDto> defaultBlocks1 = blockService.findByNoteId(TEST_USER_ID, note1.noteId());
+        NoteDto note1 = noteService.create(TEST_USER_ID, project.id(), noteTitle1, noteType1);
+        blockService.createMultiple(TEST_USER_ID, note1.id(), blockParams1);
+        List<BlockDto> defaultBlocks1 = blockService.findByNoteId(TEST_USER_ID, note1.id());
 
-        blockService.update(TEST_USER_ID, defaultBlocks1.get(0).blockId(), textUpdate("25 세"));
-        blockService.update(TEST_USER_ID, defaultBlocks1.get(1).blockId(), textUpdate("인간"));
+        blockService.update(TEST_USER_ID, defaultBlocks1.get(0).id(), textUpdate("25 세"));
+        blockService.update(TEST_USER_ID, defaultBlocks1.get(1).id(), textUpdate("인간"));
 
         // 3. 캐릭터 2 생성 + 수정
-        NoteDto note2 = noteService.create(TEST_USER_ID, project.projectId(), noteTitle2, noteType2);
-        blockService.createMultiple(TEST_USER_ID, note2.noteId(), blockParams2);
-        List<BlockDto> defaultBlocks2 = blockService.findByNoteId(TEST_USER_ID, note2.noteId());
+        NoteDto note2 = noteService.create(TEST_USER_ID, project.id(), noteTitle2, noteType2);
+        blockService.createMultiple(TEST_USER_ID, note2.id(), blockParams2);
+        List<BlockDto> defaultBlocks2 = blockService.findByNoteId(TEST_USER_ID, note2.id());
 
-        blockService.update(TEST_USER_ID, defaultBlocks2.get(0).blockId(), textUpdate("28 세"));
-        blockService.update(TEST_USER_ID, defaultBlocks2.get(1).blockId(), textUpdate("인간"));
+        blockService.update(TEST_USER_ID, defaultBlocks2.get(0).id(), textUpdate("28 세"));
+        blockService.update(TEST_USER_ID, defaultBlocks2.get(1).id(), textUpdate("인간"));
 
         // === Then ===
         assertThat(project.title()).isEqualTo(projectTitle);

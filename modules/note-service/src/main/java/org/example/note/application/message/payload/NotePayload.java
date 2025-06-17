@@ -16,6 +16,6 @@ public record NotePayload(
 
     // 필요한 팩토리 메서드
     public static NotePayload fromDto(NoteDto dto) {
-        return new NotePayload(dto.noteId(), dto.projectId(), dto.title(), dto.type(), dto.position());
+        return new NotePayload(dto.id(), dto.projectId(), dto.title(), dto.type(), dto.position());
     }
 }

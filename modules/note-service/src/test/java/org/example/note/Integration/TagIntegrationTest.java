@@ -87,7 +87,7 @@ public class TagIntegrationTest {
 
         List<NoteDto> notesByTag = noteTagService.findNotesByTag(projectId, savedTag.getId());
         assertThat(notesByTag).hasSize(1);
-        assertThat(notesByTag.get(0).noteId()).isEqualTo(noteId);
+        assertThat(notesByTag.get(0).id()).isEqualTo(noteId);
 
         // === When ===
         // 노트에서 태그 제거

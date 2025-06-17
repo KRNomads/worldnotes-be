@@ -37,6 +37,14 @@ public class Note {
 
     private String title;
 
+    private String subTitle;
+
+    private String summary;
+
+    private String imgUrl;
+
+    private String color;
+
     @Enumerated(EnumType.STRING)
     private NoteType type;
 
@@ -67,9 +75,29 @@ public class Note {
         return note;
     }
 
-    public void update(String title) {
+    public void updateTitle(String title) {
 
         this.title = title;
+    }
+
+    public void updateSubTitle(String subTitle) {
+
+        this.subTitle = subTitle;
+    }
+
+    public void updateSummary(String summary) {
+
+        this.summary = summary;
+    }
+
+    public void updateImgUrl(String imgUrl) {
+
+        this.imgUrl = imgUrl;
+    }
+
+    public void updateColor(String color) {
+
+        this.color = color;
     }
 
     public void updatePosition(Integer position) {

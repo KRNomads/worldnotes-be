@@ -7,7 +7,7 @@ import org.example.note.domain.enums.BlockType;
 import org.example.note.domain.property.BlockProperties;
 
 public record BlockDto(
-        Long blockId,
+        Long id,
         UUID noteId,
         String title,
         String fieldKey,

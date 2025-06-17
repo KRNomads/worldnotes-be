@@ -37,6 +37,8 @@ public class User {
 
     private String providerId;
 
+    private String profileImg;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -76,6 +78,10 @@ public class User {
     public void updateNameAndEmail(String name, String email) {
         this.name = name;
         this.email = email;
+    }
+
+    public void updateProfileImg(String profileImg) {
+        this.profileImg = profileImg;
     }
 
     // 소프트 삭제

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.example.note.adapter.out.repository.NoteJpaRepository;
 import org.example.note.application.dto.NoteDto;
+import org.example.note.application.dto.NoteUpdateParam;
 import org.example.note.domain.entity.Note;
 import org.example.note.domain.entity.Project;
 import org.example.note.domain.enums.NoteType;
@@ -89,14 +90,33 @@ public class NoteService {
 
     // === 업데이트 ===
     @Transactional
-    public NoteDto update(UUID userId, UUID id, String title) {
+    public NoteDto update(UUID userId, UUID id, NoteUpdateParam param) {
         Note note = notePermissionService.getNoteIfOwner(userId, id);
 
-        note.update(title);
+        if (param.title() != null) {
+            note.updateTitle(param.title());
+        }
+
+        if (param.subTitle() != null) {
+            note.updateSubTitle(param.subTitle());
+        }
+
+        if (param.summary() != null) {
+            note.updateSummary(param.summary());
+        }
+
+        if (param.imgUrl() != null) {
+            note.updateImgUrl(param.imgUrl());
+        }
+
+        if (param.color() != null) {
+            note.updateColor(param.color());
+        }
+
         return NoteDto.fromEntity(note);
     }
 
-    // position 업데이트 로직
+    // position 업데이트 로직??
     // === 삭제 ===
     @Transactional
     public void delete(UUID userId, UUID id) {

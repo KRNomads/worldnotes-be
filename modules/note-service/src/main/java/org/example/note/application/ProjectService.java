@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.example.note.adapter.out.repository.ProjectJpaRepository;
 import org.example.note.application.dto.ProjectDto;
+import org.example.note.application.dto.ProjectUpdateParam;
 import org.example.note.domain.entity.Project;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ProjectService {
 
-    private final NoteService noteService;
     private final ProjectPermissionService projectPermissionService;
     private final ProjectJpaRepository projectJpaRepository;
 
@@ -53,10 +53,24 @@ public class ProjectService {
 
     // === 업데이트 ===
     @Transactional
-    public ProjectDto update(UUID userId, UUID projectId, String name, String description) {
+    public ProjectDto update(UUID userId, UUID projectId, ProjectUpdateParam param) {
         Project project = projectPermissionService.getProjectIfOwner(userId, projectId);
 
-        project.update(name, description);
+        if (param.title() != null) {
+            project.updateTitle(param.title());
+        }
+
+        if (param.overview() != null) {
+            project.updateOverview(param.overview());
+        }
+
+        if (param.synopsis() != null) {
+            project.updateSynopsis(param.synopsis());
+        }
+
+        if (param.genre() != null) {
+            project.updateGenre(param.genre());
+        }
 
         return ProjectDto.from(project);
     }

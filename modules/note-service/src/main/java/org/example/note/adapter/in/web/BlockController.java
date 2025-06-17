@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,7 +60,7 @@ public class BlockController {
         return ResponseEntity.ok(blockDtos);
     }
 
-    @PutMapping("/{blockId}")
+    @PatchMapping("/{blockId}")
     @Operation(summary = "블록 업데이트")
     public ResponseEntity<BlockDto> updateBlock(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long blockId,
             @RequestBody BlockUpdateRequest request) {

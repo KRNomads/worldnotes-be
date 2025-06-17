@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,15 +53,15 @@ public class ProjectController {
     public ResponseEntity<ProjectDto> createProject(@AuthenticationPrincipal UserDetails userDetails,
             @RequestBody ProjectCreateRequest request) {
         UUID userId = UUID.fromString(userDetails.getUsername());
-        ProjectDto projectDto = projectService.create(userId, request.name(), request.description());
+        ProjectDto projectDto = projectService.create(userId, request.title(), request.overview());
         return ResponseEntity.ok(projectDto);
     }
 
-    @PutMapping("/{projectId}")
+    @PatchMapping("/{projectId}")
     @Operation(summary = "프로젝트 업데이트")
     public ResponseEntity<ProjectDto> updateProject(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID projectId, @RequestBody ProjectUpdateRequest request) {
         UUID userId = UUID.fromString(userDetails.getUsername());
-        ProjectDto projectDto = projectService.update(userId, projectId, request.name(), request.description());
+        ProjectDto projectDto = projectService.update(userId, projectId, request.toParam());
         return ResponseEntity.ok(projectDto);
     }
 
