@@ -1,5 +1,7 @@
 package org.example.auth.config;
 
+import java.util.List;
+
 import org.example.auth.application.CustomOAuth2UserService;
 import org.example.auth.filter.ApiKeyAuthenticationFilter;
 import org.example.auth.filter.TokenAuthenticationFilter;
@@ -8,8 +10,8 @@ import org.example.auth.handler.CustomAuthenticationEntryPoint;
 import org.example.auth.handler.OAuth2AuthenticationSuccessHandler;
 import org.example.auth.handler.OAuth2FailureHandler;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer; // Customizer 임포트 추가
+import org.springframework.context.annotation.Configuration; // Customizer 임포트 추가
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,13 +22,12 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher; // CORS 관련 임포트 추가
 import org.springframework.web.cors.CorsConfiguration; // CORS 관련 임포트 추가
 import org.springframework.web.cors.CorsConfigurationSource; // CORS 관련 임포트 추가
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // CORS 관련 임포트 추가
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import lombok.RequiredArgsConstructor;
-import java.util.List; // List 임포트 추가
+import lombok.RequiredArgsConstructor; // List 임포트 추가
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -95,7 +96,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000")); // 프론트엔드 주소
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // OPTIONS 포함 확인
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // OPTIONS 포함 확인
         configuration.setAllowedHeaders(List.of("*")); // 필요시 특정 헤더만 허용하도록 수정
         configuration.setAllowCredentials(true); // Credentials 허용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
